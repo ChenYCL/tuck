@@ -6,20 +6,61 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DA5A06C33050383E00FDF89B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DA5A06C23050383E00FDF89B /* Sparkle */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DA5A06CE3050383E00FDF89B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA5A06A33050383E00FDF89B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DA5A06AA3050383E00FDF89B;
+			remoteInfo = Tuck;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		DA5A06AB3050383E00FDF89B /* Tuck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tuck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA5A06C53050383E00FDF89B /* TuckTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TuckTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DA5A06C03050383E00FDF89B /* Exceptions for "Tuck" folder in "Tuck" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DA5A06AA3050383E00FDF89B /* Tuck */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DA5A06AD3050383E00FDF89B /* Tuck */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DA5A06C03050383E00FDF89B /* Exceptions for "Tuck" folder in "Tuck" target */,
+			);
 			path = Tuck;
+			sourceTree = "<group>";
+		};
+		DA5A06C63050383E00FDF89B /* TuckTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TuckTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DA5A06A83050383E00FDF89B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA5A06C33050383E00FDF89B /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA5A06C83050383E00FDF89B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				DA5A06AD3050383E00FDF89B /* Tuck */,
+				DA5A06C63050383E00FDF89B /* TuckTests */,
 				DA5A06AC3050383E00FDF89B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				DA5A06AB3050383E00FDF89B /* Tuck.app */,
+				DA5A06C53050383E00FDF89B /* TuckTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,10 +108,34 @@
 			);
 			name = Tuck;
 			packageProductDependencies = (
+				DA5A06C23050383E00FDF89B /* Sparkle */,
 			);
 			productName = Tuck;
 			productReference = DA5A06AB3050383E00FDF89B /* Tuck.app */;
 			productType = "com.apple.product-type.application";
+		};
+		DA5A06C43050383E00FDF89B /* TuckTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA5A06CA3050383E00FDF89B /* Build configuration list for PBXNativeTarget "TuckTests" */;
+			buildPhases = (
+				DA5A06C73050383E00FDF89B /* Sources */,
+				DA5A06C83050383E00FDF89B /* Frameworks */,
+				DA5A06C93050383E00FDF89B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DA5A06CD3050383E00FDF89B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DA5A06C63050383E00FDF89B /* TuckTests */,
+			);
+			name = TuckTests;
+			packageProductDependencies = (
+			);
+			productName = TuckTests;
+			productReference = DA5A06C53050383E00FDF89B /* TuckTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -83,6 +150,10 @@
 					DA5A06AA3050383E00FDF89B = {
 						CreatedOnToolsVersion = 26.6;
 					};
+					DA5A06C43050383E00FDF89B = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = DA5A06AA3050383E00FDF89B;
+					};
 				};
 			};
 			buildConfigurationList = DA5A06A63050383E00FDF89B /* Build configuration list for PBXProject "Tuck" */;
@@ -91,21 +162,33 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = DA5A06A23050383E00FDF89B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DA5A06C13050383E00FDF89B /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DA5A06AC3050383E00FDF89B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				DA5A06AA3050383E00FDF89B /* Tuck */,
+				DA5A06C43050383E00FDF89B /* TuckTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DA5A06A93050383E00FDF89B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA5A06C93050383E00FDF89B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +205,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DA5A06C73050383E00FDF89B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DA5A06CD3050383E00FDF89B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DA5A06AA3050383E00FDF89B /* Tuck */;
+			targetProxy = DA5A06CE3050383E00FDF89B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DA5A06B43050383E00FDF89B /* Debug */ = {
@@ -179,7 +277,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -237,7 +335,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -250,16 +348,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Tuck/Tuck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 63NUBT2Q42;
-				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_FILE = Tuck/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 zerx-lab";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -267,7 +367,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zerx-lab.Tuck";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -282,16 +381,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Tuck/Tuck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 63NUBT2Q42;
-				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_FILE = Tuck/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 zerx-lab";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -299,13 +400,54 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zerx-lab.Tuck";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		DA5A06CB3050383E00FDF89B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 63NUBT2Q42;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zerx-lab.TuckTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tuck.app/Contents/MacOS/Tuck";
+			};
+			name = Debug;
+		};
+		DA5A06CC3050383E00FDF89B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 63NUBT2Q42;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.zerx-lab.TuckTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tuck.app/Contents/MacOS/Tuck";
 			};
 			name = Release;
 		};
@@ -330,7 +472,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		DA5A06CA3050383E00FDF89B /* Build configuration list for PBXNativeTarget "TuckTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA5A06CB3050383E00FDF89B /* Debug */,
+				DA5A06CC3050383E00FDF89B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DA5A06C13050383E00FDF89B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DA5A06C23050383E00FDF89B /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA5A06C13050383E00FDF89B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DA5A06A33050383E00FDF89B /* Project object */;
 }

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs>
+  <clipPath id="sq"><rect x="100" y="100" width="824" height="824" rx="185"/></clipPath>
+  <!-- 背板:纯黑底 + 顶部微弱高光,模拟玻璃表面反射 -->
+  <linearGradient id="sheen" gradientUnits="userSpaceOnUse" x1="0" y1="100" x2="0" y2="924">
+    <stop offset="0" stop-color="#fff" stop-opacity=".10"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="rim" gradientUnits="userSpaceOnUse" x1="100" y1="100" x2="924" y2="924">
+    <stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity=".25"/>
+  </linearGradient>
+  <!-- 玻璃面板 -->
+  <linearGradient id="glassFill" gradientUnits="userSpaceOnUse" x1="150" y1="330" x2="512" y2="694">
+    <stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/>
+  </linearGradient>
+  <linearGradient id="glassRim" gradientUnits="userSpaceOnUse" x1="150" y1="330" x2="512" y2="694">
+    <stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".45" stop-color="#fff" stop-opacity=".15"/><stop offset="1" stop-color="#fff" stop-opacity=".55"/>
+  </linearGradient>
+  <linearGradient id="glassTop" gradientUnits="userSpaceOnUse" x1="0" y1="330" x2="0" y2="470">
+    <stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </linearGradient>
+  <!-- 实心元素:白色带轻微立体 -->
+  <linearGradient id="solid" gradientUnits="userSpaceOnUse" x1="0" y1="420" x2="0" y2="610">
+    <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E4E6EC"/>
+  </linearGradient>
+  <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+  <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".55"/></filter>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#fff" flood-opacity=".35"/></filter>
+</defs>
+<rect x="100" y="100" width="824" height="824" rx="185" fill="#0E0E11"/>
+<g clip-path="url(#sq)">
+  <rect x="100" y="100" width="824" height="824" fill="url(#sheen)"/>
+  <!-- 背景微光,衬托玻璃折射 -->
+  <ellipse cx="330" cy="520" rx="260" ry="220" fill="#fff" fill-opacity=".06" filter="url(#blur)"/>
+  <!-- 玻璃面板 -->
+  <rect x="150" y="330" width="362" height="364" rx="64" fill="url(#glassFill)" filter="url(#sh)"/>
+  <rect x="150" y="330" width="362" height="364" rx="64" fill="url(#glassTop)"/>
+  <rect x="153" y="333" width="356" height="358" rx="61" fill="none" stroke="url(#glassRim)" stroke-width="5"/>
+  <!-- 藏起的项:磨砂 -->
+  <circle cx="285" cy="512" r="46" fill="#fff" fill-opacity=".30"/>
+  <circle cx="410" cy="512" r="46" fill="#fff" fill-opacity=".30"/>
+  <circle cx="285" cy="512" r="46" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="3"/>
+  <circle cx="410" cy="512" r="46" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="3"/>
+  <!-- 分隔线与可见项 -->
+  <g filter="url(#glow)">
+    <rect x="497" y="370" width="30" height="284" rx="15" fill="url(#solid)"/>
+    <circle cx="628" cy="512" r="50" fill="url(#solid)"/>
+    <circle cx="768" cy="512" r="50" fill="url(#solid)"/>
+  </g>
+</g>
+<rect x="102.5" y="102.5" width="819" height="819" rx="183" fill="none" stroke="url(#rim)" stroke-width="3"/>
+</svg>

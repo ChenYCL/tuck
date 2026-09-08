@@ -1,0 +1,107 @@
+//
+//  Modifiers.swift
+//  Tuck
+//
+
+import Carbon.HIToolbox
+import Cocoa
+
+/// A bit mask containing the modifier keys for a hotkey.
+nonisolated struct Modifiers: OptionSet, Codable, Hashable {
+    let rawValue: Int
+
+    static let control = Modifiers(rawValue: 1 << 0)
+    static let option = Modifiers(rawValue: 1 << 1)
+    static let shift = Modifiers(rawValue: 1 << 2)
+    static let command = Modifiers(rawValue: 1 << 3)
+}
+
+nonisolated extension Modifiers {
+    /// A symbolic string representation of the modifiers, in the order
+    /// displayed by the system: ⌃⌥⇧⌘.
+    var symbolicValue: String {
+        var result = ""
+        if contains(.control) {
+            result.append("⌃")
+        }
+        if contains(.option) {
+            result.append("⌥")
+        }
+        if contains(.shift) {
+            result.append("⇧")
+        }
+        if contains(.command) {
+            result.append("⌘")
+        }
+        return result
+    }
+
+    /// Cocoa flags.
+    var nsEventFlags: NSEvent.ModifierFlags {
+        var result: NSEvent.ModifierFlags = []
+        if contains(.control) {
+            result.insert(.control)
+        }
+        if contains(.option) {
+            result.insert(.option)
+        }
+        if contains(.shift) {
+            result.insert(.shift)
+        }
+        if contains(.command) {
+            result.insert(.command)
+        }
+        return result
+    }
+
+    /// Raw Carbon flags.
+    var carbonFlags: Int {
+        var result = 0
+        if contains(.control) {
+            result |= controlKey
+        }
+        if contains(.option) {
+            result |= optionKey
+        }
+        if contains(.shift) {
+            result |= shiftKey
+        }
+        if contains(.command) {
+            result |= cmdKey
+        }
+        return result
+    }
+
+    init(nsEventFlags: NSEvent.ModifierFlags) {
+        let flags = nsEventFlags.intersection(.deviceIndependentFlagsMask)
+        self.init()
+        if flags.contains(.control) {
+            insert(.control)
+        }
+        if flags.contains(.option) {
+            insert(.option)
+        }
+        if flags.contains(.shift) {
+            insert(.shift)
+        }
+        if flags.contains(.command) {
+            insert(.command)
+        }
+    }
+
+    init(carbonFlags: Int) {
+        self.init()
+        if carbonFlags & controlKey == controlKey {
+            insert(.control)
+        }
+        if carbonFlags & optionKey == optionKey {
+            insert(.option)
+        }
+        if carbonFlags & shiftKey == shiftKey {
+            insert(.shift)
+        }
+        if carbonFlags & cmdKey == cmdKey {
+            insert(.command)
+        }
+    }
+}

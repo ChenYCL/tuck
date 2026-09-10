@@ -37,42 +37,15 @@ struct TuckBarView: View {
             : Color.white.opacity(0.78)
     }
 
-    private var barShape: UnevenRoundedRectangle {
-        let r: CGFloat = isAttached ? 10 : 12
-        switch location {
-        case .below:
-            return UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: r,
-                bottomTrailingRadius: r,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
-        case .left:
-            return UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 0,
-                bottomTrailingRadius: r,
-                topTrailingRadius: r,
-                style: .continuous
-            )
-        case .right:
-            return UnevenRoundedRectangle(
-                topLeadingRadius: r,
-                bottomLeadingRadius: r,
-                bottomTrailingRadius: 0,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
-        case .dynamic, .mousePointer, .tuckIcon:
-            return UnevenRoundedRectangle(
-                topLeadingRadius: r,
-                bottomLeadingRadius: r,
-                bottomTrailingRadius: r,
-                topTrailingRadius: r,
-                style: .continuous
-            )
-        }
+    /// Small enough that a 33pt-tall bar reads as a shelf, not a capsule.
+    private var cornerRadius: CGFloat { isAttached ? 6 : 12 }
+
+    private var barShape: AttachedTabShape {
+        AttachedTabShape(attached: location.attachedEdge, cornerRadius: cornerRadius)
+    }
+
+    private var barStroke: AttachedTabStroke {
+        AttachedTabStroke(attached: location.attachedEdge, cornerRadius: cornerRadius)
     }
 
     private var showsItems: Bool {
@@ -92,15 +65,19 @@ struct TuckBarView: View {
                 barShape.fill(barFill)
             }
             .overlay {
-                barShape.strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.18 : 0.08), lineWidth: 0.5)
+                barStroke.stroke(
+                    Color.primary.opacity(menuBarColorScheme == .dark ? 0.16 : 0.10),
+                    lineWidth: 0.5
+                )
             }
             .clipShape(barShape)
             .environment(\.colorScheme, menuBarColorScheme)
-            .shadow(color: .black.opacity(isAttached ? 0.10 : 0.18), radius: isAttached ? 4 : 8, y: isAttached ? 1 : 3)
+            .shadow(color: .black.opacity(isAttached ? 0.08 : 0.18), radius: isAttached ? 3 : 8, y: isAttached ? 1 : 3)
             .frame(
                 maxWidth: isVertical ? nil : screen.frame.width,
                 maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
             )
+            .animation(.spring(duration: 0.28, bounce: 0), value: showsItems)
             .onHover { hovering in
                 if hovering {
                     panel.cancelCollapse()
@@ -122,6 +99,13 @@ struct TuckBarView: View {
             VStack(spacing: 0) {
                 settingsButton
                 itemBody
+            }
+        } else if location == .below {
+            // Handle sits under the clock; items grow left so the left edge is a
+            // square shelf, not a chevron inside a round cap.
+            HStack(spacing: 0) {
+                itemBody
+                settingsButton
             }
         } else {
             HStack(spacing: 0) {

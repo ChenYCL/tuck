@@ -49,6 +49,13 @@ struct TuckBarGeometryTests {
         #expect(origin.y == 576)
     }
 
+    @Test func attachedEdgesMatchPlacement() {
+        #expect(TuckBarLocation.below.attachedEdge == .top)
+        #expect(TuckBarLocation.left.attachedEdge == .left)
+        #expect(TuckBarLocation.right.attachedEdge == .right)
+        #expect(TuckBarLocation.mousePointer.attachedEdge == .none)
+    }
+
     @Test func belowAlwaysVisibleStaysCollapsedUntilExpanded() {
         #expect(TuckBarGeometry.showsItems(location: .below, alwaysVisible: true, expanded: false) == false)
         #expect(TuckBarGeometry.showsItems(location: .below, alwaysVisible: true, expanded: true) == true)

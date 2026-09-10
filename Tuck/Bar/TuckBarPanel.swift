@@ -25,6 +25,7 @@ final class TuckBarPanel: NSPanel {
         )
         isFloatingPanel = true
         animationBehavior = .none
+        isOpaque = false
         backgroundColor = .clear
         hasShadow = false
         level = NSWindow.Level(rawValue: NSWindow.Level.mainMenu.rawValue + 1)
@@ -105,7 +106,8 @@ final class TuckBarPanel: NSPanel {
     }
 
     private func relayoutIfVisible() {
-        guard currentSection != nil, let hostingView, let screen else { return }
+        guard currentSection != nil, let hostingView else { return }
+        guard let screen = screenForBar() ?? screen else { return }
         Task { @MainActor [weak self] in
             self?.layoutContent(hostingView: hostingView, on: screen)
         }
@@ -123,12 +125,13 @@ final class TuckBarPanel: NSPanel {
     }
 
     private func updateOrigin(for screen: NSScreen) {
+        let location = appState.settings.tuckBarLocation
         let origin = TuckBarGeometry.origin(
-            location: appState.settings.tuckBarLocation,
+            location: location,
             barSize: frame.size,
             screen: TuckBarGeometry.Screen(frame: screen.frame, menuBarHeight: screen.menuBarHeight),
             mouseX: NSEvent.mouseLocation.x,
-            tuckIconMidX: tuckIconMidX(on: screen),
+            tuckIconMidX: (location == .tuckIcon || location == .dynamic) ? tuckIconMidX(on: screen) : nil,
             isMouseInEmptySpace: appState.interaction.isMouseInsideEmptyMenuBarSpace
         )
         setFrameOrigin(origin)
@@ -159,10 +162,13 @@ final class TuckBarPanel: NSPanel {
         await refreshPinned()
     }
 
+    private func screenForBar() -> NSScreen? {
+        NSScreen.screenWithActiveMenuBar ?? NSScreen.screens.first ?? NSScreen.main
+    }
+
     private func refreshPinned() async {
         guard isPinned else { return }
-        let screen = NSScreen.main ?? NSScreen.screens.first
-        guard let screen else { return }
+        guard let screen = screenForBar() else { return }
         await show(section: .hidden, on: screen)
     }
 
@@ -180,6 +186,8 @@ final class TuckBarPanel: NSPanel {
         let hostingView = NSHostingView(rootView: AnyView(
             TuckBarView(section: section, screen: screen, panel: self).environment(appState)
         ))
+        hostingView.wantsLayer = true
+        hostingView.layer?.backgroundColor = .clear
         self.hostingView = hostingView
         contentView = hostingView
 

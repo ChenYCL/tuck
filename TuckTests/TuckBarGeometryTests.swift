@@ -20,7 +20,7 @@ struct TuckBarGeometryTests {
             isMouseInEmptySpace: false
         )
         #expect(origin.x == 1240)
-        #expect(origin.y == 841)
+        #expect(origin.y == 842)
     }
 
     @Test func leftSitsOnLeadingEdgeBelowMenuBar() {
@@ -32,8 +32,8 @@ struct TuckBarGeometryTests {
             tuckIconMidX: nil,
             isMouseInEmptySpace: false
         )
-        #expect(origin.x == TuckBarGeometry.edgeInset)
-        #expect(origin.y == 575)
+        #expect(origin.x == 0)
+        #expect(origin.y == 576)
     }
 
     @Test func rightSitsOnTrailingEdgeBelowMenuBar() {
@@ -45,8 +45,14 @@ struct TuckBarGeometryTests {
             tuckIconMidX: nil,
             isMouseInEmptySpace: false
         )
-        #expect(origin.x == 1396)
-        #expect(origin.y == 575)
+        #expect(origin.x == 1400)
+        #expect(origin.y == 576)
+    }
+
+    @Test func attachedBarsSitFlushAndPointerBarsLeaveAGap() {
+        #expect(TuckBarGeometry.menuBarGap(for: .below) == 0)
+        #expect(TuckBarGeometry.menuBarGap(for: .left) == 0)
+        #expect(TuckBarGeometry.menuBarGap(for: .mousePointer) == 4)
     }
 
     @Test func leftAndRightAreVertical() {

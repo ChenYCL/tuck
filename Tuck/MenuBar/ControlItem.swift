@@ -49,7 +49,8 @@ final class ControlItem {
     var window: NSWindow? { statusItem.button?.window }
 
     var windowID: CGWindowID? {
-        window.map { CGWindowID($0.windowNumber) }
+        guard let window, window.windowNumber > 0 else { return nil }
+        return CGWindowID(window.windowNumber)
     }
 
     var isSectionDivider: Bool { identifier != .tuckIcon }

@@ -17,6 +17,14 @@ enum TuckBarLocation: String, CaseIterable, Codable, Identifiable {
         TuckBarGeometry.axis(for: self) == .vertical
     }
 
+    /// Fixed to an edge of the screen / menu bar, rather than floating under the pointer.
+    var isAttached: Bool {
+        switch self {
+        case .below, .left, .right: true
+        case .dynamic, .mousePointer, .tuckIcon: false
+        }
+    }
+
     var displayName: String {
         switch self {
         case .below: String(localized: "Below menu bar")

@@ -13,7 +13,10 @@ enum TuckBarGeometry {
         var menuBarHeight: CGFloat
     }
 
-    static let edgeInset: CGFloat = 4
+    /// Extra gap under the menu bar for pointer-following HUDs. Attached bars sit flush.
+    static func menuBarGap(for location: TuckBarLocation) -> CGFloat {
+        location.isAttached ? 0 : 4
+    }
 
     static func axis(for location: TuckBarLocation) -> Axis {
         switch location {
@@ -31,7 +34,7 @@ enum TuckBarGeometry {
         tuckIconMidX: CGFloat?,
         isMouseInEmptySpace: Bool
     ) -> CGPoint {
-        let yBelowMenuBar = (screen.frame.maxY - 1) - screen.menuBarHeight - barSize.height
+        let yBelowMenuBar = screen.frame.maxY - screen.menuBarHeight - barSize.height - menuBarGap(for: location)
 
         func clampedX(_ x: CGFloat) -> CGFloat {
             let lowerBound = screen.frame.minX
@@ -60,9 +63,9 @@ enum TuckBarGeometry {
         case .below:
             return CGPoint(x: clampedX(screen.frame.maxX - barSize.width), y: yBelowMenuBar)
         case .left:
-            return CGPoint(x: screen.frame.minX + edgeInset, y: clampedY(yBelowMenuBar))
+            return CGPoint(x: screen.frame.minX, y: clampedY(yBelowMenuBar))
         case .right:
-            return CGPoint(x: screen.frame.maxX - barSize.width - edgeInset, y: clampedY(yBelowMenuBar))
+            return CGPoint(x: screen.frame.maxX - barSize.width, y: clampedY(yBelowMenuBar))
         case .dynamic:
             let x = isMouseInEmptySpace ? mousePointerX() : tuckIconX()
             return CGPoint(x: x, y: yBelowMenuBar)

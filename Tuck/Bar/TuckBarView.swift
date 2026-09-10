@@ -12,21 +12,83 @@ struct TuckBarView: View {
         appState.itemStore.cache.managedItems(for: section)
     }
 
-    private var isVertical: Bool {
-        appState.settings.tuckBarLocation.isVertical
+    private var location: TuckBarLocation {
+        appState.settings.tuckBarLocation
     }
 
+    private var isVertical: Bool { location.isVertical }
+    private var isAttached: Bool { location.isAttached }
+
     private var stripThickness: CGFloat {
-        let height = appState.imageCache.menuBarHeight ?? screen.menuBarHeight
-        return screen.hasNotch ? height - 10 : height
+        appState.imageCache.menuBarHeight ?? screen.menuBarHeight
+    }
+
+    /// Follow the real menu bar, which can stay light over a light wallpaper even
+    /// when the frontmost app is dark.
+    private var menuBarColorScheme: ColorScheme {
+        let appearance = appState.menuBarManager.section(named: .visible)?.controlItem.window?.effectiveAppearance
+            ?? NSApp.effectiveAppearance
+        return appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? .dark : .light
+    }
+
+    private var barFill: Color {
+        menuBarColorScheme == .dark
+            ? Color.black.opacity(0.42)
+            : Color.white.opacity(0.78)
+    }
+
+    private var barShape: UnevenRoundedRectangle {
+        let r: CGFloat = isAttached ? 10 : 12
+        switch location {
+        case .below:
+            return UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: r,
+                bottomTrailingRadius: r,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+        case .left:
+            return UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: r,
+                topTrailingRadius: r,
+                style: .continuous
+            )
+        case .right:
+            return UnevenRoundedRectangle(
+                topLeadingRadius: r,
+                bottomLeadingRadius: r,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+        case .dynamic, .mousePointer, .tuckIcon:
+            return UnevenRoundedRectangle(
+                topLeadingRadius: r,
+                bottomLeadingRadius: r,
+                bottomTrailingRadius: r,
+                topTrailingRadius: r,
+                style: .continuous
+            )
+        }
     }
 
     var body: some View {
-        content
+        itemStack
             .frame(width: isVertical ? stripThickness : nil, height: isVertical ? nil : stripThickness)
-            .padding(isVertical ? EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0) : EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7))
-            .glassEffect(.regular, in: .capsule)
-            .padding(5)
+            .padding(.horizontal, isVertical ? 0 : 8)
+            .padding(.vertical, isVertical ? 8 : 0)
+            .background {
+                barShape.fill(barFill)
+            }
+            .overlay {
+                barShape.strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.18 : 0.08), lineWidth: 0.5)
+            }
+            .clipShape(barShape)
+            .environment(\.colorScheme, menuBarColorScheme)
+            .shadow(color: .black.opacity(isAttached ? 0.10 : 0.18), radius: isAttached ? 4 : 8, y: isAttached ? 1 : 3)
             .frame(
                 maxWidth: isVertical ? nil : screen.frame.width,
                 maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
@@ -34,25 +96,19 @@ struct TuckBarView: View {
     }
 
     @ViewBuilder
-    private var content: some View {
+    private var itemStack: some View {
         if appState.menuBarManager.isMenuBarHiddenBySystemUserDefaults {
             Text("The Tuck Bar cannot be used with an automatically hidden menu bar")
-                .padding(.horizontal, 10)
-        } else {
-            itemStack
-        }
-    }
-
-    @ViewBuilder
-    private var itemStack: some View {
-        let spacing: CGFloat = 0
-        if isVertical {
-            VStack(spacing: spacing) {
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+        } else if isVertical {
+            VStack(spacing: 0) {
                 settingsButton
                 itemBody
             }
         } else {
-            HStack(spacing: spacing) {
+            HStack(spacing: 0) {
                 settingsButton
                 itemBody
             }
@@ -62,10 +118,7 @@ struct TuckBarView: View {
     @ViewBuilder
     private var itemBody: some View {
         if items.isEmpty {
-            Text(appState.settings.tuckBarAlwaysVisible
-                 ? "Drag items into Hidden in Settings → Layout"
-                 : "No menu bar items in the \(section.displayName) section")
-                .padding(.horizontal, 10)
+            EmptyView()
         } else if isVertical {
             ScrollView(.vertical) {
                 VStack(spacing: 0) {
@@ -74,8 +127,9 @@ struct TuckBarView: View {
                     }
                 }
             }
+            .scrollIndicators(.hidden)
             .defaultScrollAnchor(.top)
-            .frame(maxHeight: max(screen.frame.height - screen.menuBarHeight - 40, 40))
+            .frame(maxHeight: max(screen.frame.height - screen.menuBarHeight - 16, 40))
         } else {
             ScrollView(.horizontal) {
                 HStack(spacing: 0) {
@@ -84,30 +138,32 @@ struct TuckBarView: View {
                     }
                 }
             }
+            .scrollIndicators(.hidden)
             .defaultScrollAnchor(.trailing)
-            .frame(maxWidth: max(screen.frame.width - 40, 40))
+            .frame(maxWidth: max(screen.frame.width - 16, 40))
         }
     }
 
     private var settingsButton: some View {
         Button {
-            appState.openSettingsWindow(pane: .general)
+            appState.openSettingsWindow(pane: .layout)
         } label: {
             Group {
                 if let image = appState.settings.tuckIcon.image(state: .hideItems, isTemplate: appState.settings.customIconIsTemplate) {
                     Image(nsImage: image)
                 } else {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 12, weight: .medium))
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 6, weight: .semibold))
+                        .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: 22, height: 22)
+            .frame(width: 18, height: 18)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(String(localized: "Settings"))
         .accessibilityLabel(String(localized: "Settings"))
-        .padding(isVertical ? EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0) : EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
+        .padding(isVertical ? EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: 0) : EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
 }
 
@@ -132,7 +188,7 @@ private struct TuckBarItemView: View {
                 Image(nsImage: image)
             } else {
                 ItemFallbackIcon(item: item)
-                    .padding(.horizontal, 6)
+                    .padding(.horizontal, 4)
             }
         }
         .contentShape(Rectangle())

@@ -73,6 +73,7 @@ struct TuckBarView: View {
 
     var body: some View {
         itemStack
+            .background(Color.clear)
             .frame(width: isVertical ? (isDockStyle ? nil : stripThickness) : nil, height: isVertical ? nil : stripThickness)
             .padding(.horizontal, isVertical ? (isDockStyle ? dockPadding : 0) : (showsItems ? 8 : 6))
             .padding(.vertical, isVertical ? (isDockStyle ? dockPadding : 8) : 0)
@@ -85,6 +86,8 @@ struct TuckBarView: View {
                     lineWidth: 0.5
                 )
             }
+            .clipShape(barShape)
+            .compositingGroup()
             .environment(\.colorScheme, menuBarColorScheme)
             .shadow(
                 color: .black.opacity(isDockStyle ? 0.28 : (isAttached ? 0.08 : 0.18)),
@@ -200,7 +203,7 @@ struct TuckBarView: View {
         let hovering = hoveredWindowID == item.windowID
         let scale = hovering ? magnification : 1
         let pop: CGFloat = hovering ? (iconSize * (magnification - 1) * 0.35) : 0
-        return TuckBarItemView(item: item, panel: panel, preferredSize: isDockStyle ? iconSize : nil)
+        return TuckBarItemView(item: item, panel: panel, preferredSize: isDockStyle ? iconSize : nil, prefersAppIcon: isDockStyle)
             .frame(width: isDockStyle ? iconSize : nil, height: isDockStyle ? iconSize : nil)
             .scaleEffect(scale)
             .offset(x: location == .right ? -pop : (location == .left ? pop : 0))
@@ -220,6 +223,7 @@ private struct TuckBarItemView: View {
     let item: MenuBarItem
     let panel: TuckBarPanel
     var preferredSize: CGFloat? = nil
+    var prefersAppIcon: Bool = false
 
     private var image: NSImage? {
         guard let cgImage = appState.imageCache.images[item.info] else { return nil }
@@ -230,7 +234,9 @@ private struct TuckBarItemView: View {
 
     var body: some View {
         Group {
-            if let image {
+            if prefersAppIcon {
+                ItemFallbackIcon(item: item, size: (preferredSize ?? 18) * 0.86)
+            } else if let image {
                 Image(nsImage: image)
                     .resizable()
                     .interpolation(.high)

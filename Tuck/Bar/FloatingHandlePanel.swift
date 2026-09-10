@@ -59,6 +59,7 @@ final class FloatingHandlePanel: NSPanel {
         ))
         hosting.wantsLayer = true
         hosting.layer?.backgroundColor = .clear
+        hosting.layer?.isOpaque = false
         contentView = hosting
         setContentSize(NSSize(width: size, height: size))
         applyStoredFrame()
@@ -132,17 +133,27 @@ struct FloatingHandleView: View {
     private var size: CGFloat { CGFloat(appState.settings.floatingHandleSize) }
 
     var body: some View {
-        Group {
-            if let image = NSImage(named: appState.settings.floatingHandleIcon.assetName) {
-                Image(nsImage: image)
-                    .resizable()
-                    .interpolation(.high)
-                    .scaledToFit()
-            } else {
-                fallback
-            }
+        ZStack {
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.31, green: 0.55, blue: 0.98),
+                            Color(red: 0.12, green: 0.32, blue: 0.86)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+            Circle()
+                .strokeBorder(.white.opacity(0.28), lineWidth: 0.5)
+            glyph
+                .foregroundStyle(.white)
+                .shadow(color: .black.opacity(0.18), radius: 0.5, y: 0.5)
         }
         .frame(width: size, height: size)
+        .compositingGroup()
+        .shadow(color: .black.opacity(0.22), radius: 10, y: 4)
         .contentShape(Circle())
         .overlay {
             HandleClickDragView(panel: panel)
@@ -151,20 +162,21 @@ struct FloatingHandleView: View {
         .accessibilityLabel(String(localized: "Show hidden menu bar items"))
     }
 
-    private var fallback: some View {
-        ZStack {
-            Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [Color(red: 47 / 255, green: 107 / 255, blue: 227 / 255), Color(red: 27 / 255, green: 64 / 255, blue: 196 / 255)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .shadow(color: .black.opacity(0.28), radius: 8, y: 3)
-            Image(systemName: appState.settings.floatingHandleIcon.systemImage)
-                .font(.system(size: size * 0.32, weight: .semibold))
-                .foregroundStyle(.white)
+    @ViewBuilder
+    private var glyph: some View {
+        switch appState.settings.floatingHandleIcon {
+        case .chevron:
+            Image(systemName: "chevron.down")
+                .font(.system(size: size * 0.34, weight: .semibold))
+        case .overflow:
+            Image(systemName: "ellipsis")
+                .font(.system(size: size * 0.38, weight: .bold))
+        case .pocket:
+            Image(systemName: "tray.fill")
+                .font(.system(size: size * 0.36, weight: .medium))
+        case .monogram:
+            Text("T")
+                .font(.system(size: size * 0.42, weight: .semibold, design: .rounded))
         }
     }
 }

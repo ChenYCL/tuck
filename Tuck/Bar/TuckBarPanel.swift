@@ -167,7 +167,23 @@ final class TuckBarPanel: NSPanel {
             width: min(max(fitting.width, 1), maxWidth),
             height: min(max(fitting.height, 1), maxHeight)
         ))
+        applyDockClip(to: hostingView)
         updateOrigin(for: screen)
+    }
+
+    private func applyDockClip(to hostingView: NSHostingView<AnyView>) {
+        hostingView.wantsLayer = true
+        hostingView.layer?.backgroundColor = .clear
+        hostingView.layer?.isOpaque = false
+        if appState.settings.tuckBarLocation.usesDockChrome {
+            let radius = min(22, min(frame.width, frame.height) / 2)
+            hostingView.layer?.cornerRadius = radius
+            hostingView.layer?.cornerCurve = .continuous
+            hostingView.layer?.masksToBounds = true
+        } else {
+            hostingView.layer?.cornerRadius = 0
+            hostingView.layer?.masksToBounds = false
+        }
     }
 
     private func updateOrigin(for screen: NSScreen) {
@@ -238,6 +254,7 @@ final class TuckBarPanel: NSPanel {
         ))
         hostingView.wantsLayer = true
         hostingView.layer?.backgroundColor = .clear
+        hostingView.layer?.isOpaque = false
         self.hostingView = hostingView
         contentView = hostingView
 

@@ -27,7 +27,7 @@ struct TuckBarView: View {
     }
 
     private var dockPadding: CGFloat { isDockStyle ? 8 : 0 }
-    private var dockSpacing: CGFloat { isDockStyle ? max(4, iconSize * 0.14) : 0 }
+    private var dockSpacing: CGFloat { isDockStyle ? max(6, iconSize * 0.22) : 0 }
     private var magnification: CGFloat { isDockStyle ? CGFloat(appState.settings.edgeBarMagnification) : 1 }
 
     private var stripThickness: CGFloat {
@@ -113,16 +113,22 @@ struct TuckBarView: View {
     private var dockBar: some View {
         let overflow = iconSize * max(0, magnification - 1)
         let hoveredIndex = items.firstIndex { $0.windowID == hoveredWindowID }
+        let plateFill = menuBarColorScheme == .dark
+            ? Color.black.opacity(0.78)
+            : Color.white.opacity(0.94)
         return ZStack(alignment: location == .right ? .trailing : .leading) {
             Capsule(style: .continuous)
-                .fill(.regularMaterial)
+                .fill(plateFill)
                 .overlay {
                     Capsule(style: .continuous)
-                        .strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.22 : 0.08), lineWidth: 0.5)
+                        .fill(.ultraThinMaterial)
                 }
-                .shadow(color: .black.opacity(menuBarColorScheme == .dark ? 0.5 : 0.18), radius: 18, y: 0)
+                .overlay {
+                    Capsule(style: .continuous)
+                        .strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.28 : 0.10), lineWidth: 0.5)
+                }
+                .shadow(color: .black.opacity(menuBarColorScheme == .dark ? 0.55 : 0.20), radius: 16, y: 0)
                 .frame(width: iconSize + dockPadding * 2)
-                .padding(.vertical, dockPadding)
 
             MagnifyingDockLayout(
                 iconSize: iconSize,
@@ -138,7 +144,7 @@ struct TuckBarView: View {
             .padding(.vertical, dockPadding)
         }
         .padding(location == .right ? .leading : .trailing, overflow)
-        .animation(.spring(duration: 0.22, bounce: 0.1), value: hoveredWindowID)
+        .animation(.spring(duration: 0.22, bounce: 0.08), value: hoveredWindowID)
     }
 
     @ViewBuilder
@@ -241,13 +247,12 @@ struct TuckBarView: View {
     }
 
     private func dockCell(_ item: MenuBarItem, index: Int) -> some View {
-        let scale = TuckBarGeometry.dockScale(
-            distance: hoveredWindowID == nil ? 99 : CGFloat(abs((items.firstIndex { $0.windowID == hoveredWindowID } ?? 0) - index)),
-            maxScale: magnification
-        )
-        return DockItemIconView(item: item, size: iconSize)
-            .scaleEffect(scale)
-            .frame(width: iconSize, height: iconSize)
+        let hovered = items.firstIndex { $0.windowID == hoveredWindowID }
+        let distance: CGFloat = hovered == nil ? 99 : CGFloat(abs(hovered! - index))
+        let scale = TuckBarGeometry.dockScale(distance: distance, maxScale: magnification)
+        let size = iconSize * scale
+        return DockItemIconView(item: item, size: size)
+            .frame(width: size, height: size)
             .overlay {
                 TuckBarItemClickView(item: item, action: { button in
                     if appState.settings.tuckBarAlwaysVisible {

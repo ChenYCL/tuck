@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Lays out icons along a vertical Dock: hovered icon grows, neighbors grow less,
-/// and slots expand so glyphs never overlay each other.
+/// Vertical Dock layout. Slots grow with magnification so icons never share pixels.
 struct MagnifyingDockLayout: Layout {
     var iconSize: CGFloat
     var spacing: CGFloat
@@ -22,7 +21,7 @@ struct MagnifyingDockLayout: Layout {
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let scales = subviews.indices.map { scale(at: $0) }
         let height = scales.reduce(CGFloat(0)) { $0 + iconSize * $1 } + spacing * CGFloat(max(0, subviews.count - 1))
-        let width = iconSize * (hoveredIndex == nil ? 1 : magnification)
+        let width = iconSize * max(1, hoveredIndex == nil ? 1 : magnification)
         return CGSize(width: width, height: height)
     }
 
@@ -30,22 +29,20 @@ struct MagnifyingDockLayout: Layout {
         var y = bounds.minY
         let restEdge = growSign < 0 ? bounds.maxX : bounds.minX
         for (index, subview) in subviews.enumerated() {
-            let s = scale(at: index)
-            let slot = iconSize * s
+            let slot = iconSize * scale(at: index)
             let centerY = y + slot / 2
-            let extra = iconSize * (s - 1) / 2
             let centerX: CGFloat
             if growSign < 0 {
-                centerX = restEdge - extra - iconSize / 2
+                centerX = restEdge - slot / 2
             } else if growSign > 0 {
-                centerX = restEdge + extra + iconSize / 2
+                centerX = restEdge + slot / 2
             } else {
                 centerX = bounds.midX
             }
             subview.place(
                 at: CGPoint(x: centerX, y: centerY),
                 anchor: .center,
-                proposal: ProposedViewSize(width: iconSize, height: iconSize)
+                proposal: ProposedViewSize(width: slot, height: slot)
             )
             y += slot + spacing
         }

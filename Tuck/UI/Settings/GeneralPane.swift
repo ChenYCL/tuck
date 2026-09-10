@@ -1,3 +1,4 @@
+import AppKit
 import ServiceManagement
 import SwiftUI
 import UniformTypeIdentifiers
@@ -55,15 +56,51 @@ struct GeneralPane: View {
 
             Section("Tuck Bar") {
                 Toggle("Use Tuck Bar", isOn: $settings.useTuckBar)
-                Text("Show hidden menu bar items in a separate bar. Choose below, left, or right when the menu bar is too full.")
+                Text("Hidden items appear in a separate bar. Click the floating button to show it — it is not kept on screen.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 if settings.useTuckBar {
-                    Toggle("Always show Tuck Bar", isOn: $settings.tuckBarAlwaysVisible)
-                    Text("Below the menu bar, keep a small handle so hidden items do not cover the window. Hover the handle to expand. Left and right edges stay as a full strip.")
+                    Toggle("Show floating button", isOn: $settings.showFloatingHandle)
+                    Text("Drag the button to move it. Click to show hidden items, right-click for settings.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
-                    Picker("Location", selection: $settings.tuckBarLocation) {
+                    if settings.showFloatingHandle {
+                        LabeledContent("Size") {
+                            HStack {
+                                Slider(value: $settings.floatingHandleSize, in: 32...72, step: 4)
+                                Text("\(Int(settings.floatingHandleSize))")
+                                    .monospacedDigit()
+                                    .frame(width: 28, alignment: .trailing)
+                            }
+                        }
+                        Picker("Icon", selection: $settings.floatingHandleIcon) {
+                            ForEach(FloatingHandleIcon.allCases) { icon in
+                                Text(icon.displayName).tag(icon)
+                            }
+                        }
+                        HStack(spacing: 12) {
+                            ForEach(FloatingHandleIcon.allCases) { icon in
+                                Button {
+                                    settings.floatingHandleIcon = icon
+                                } label: {
+                                    if let image = NSImage(named: icon.assetName) {
+                                        Image(nsImage: image)
+                                            .resizable()
+                                            .frame(width: 44, height: 44)
+                                            .clipShape(Circle())
+                                            .overlay {
+                                                Circle().strokeBorder(settings.floatingHandleIcon == icon ? Color.accentColor : Color.clear, lineWidth: 2)
+                                            }
+                                    } else {
+                                        Text(icon.displayName)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .help(icon.displayName)
+                            }
+                        }
+                    }
+                    Picker("Bar location when shown", selection: $settings.tuckBarLocation) {
                         Text("Below menu bar").tag(TuckBarLocation.below)
                         Text("Left edge").tag(TuckBarLocation.left)
                         Text("Right edge").tag(TuckBarLocation.right)

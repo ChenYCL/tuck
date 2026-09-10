@@ -303,6 +303,16 @@
         }
       }
     },
+    "Bar location when shown" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "展开后条栏位置"
+          }
+        }
+      }
+    },
     "Chevron" : {
       "localizations" : {
         "zh-Hans" : {
@@ -399,6 +409,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认"
+          }
+        }
+      }
+    },
+    "Drag the button to move it. Click to show hidden items, right-click for settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拖动按钮可换位置。单击显示隐藏项，右键打开设置。"
           }
         }
       }
@@ -599,6 +619,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已授权"
+          }
+        }
+      }
+    },
+    "Hidden items appear in a separate bar. Click the floating button to show it — it is not kept on screen." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏项出现在单独条栏里。点悬浮按钮才显示，不会一直占着屏幕。"
           }
         }
       }
@@ -904,6 +934,16 @@
         }
       }
     },
+    "Monogram" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字母"
+          }
+        }
+      }
+    },
     "Missing mouse location" : {
       "localizations" : {
         "zh-Hans" : {
@@ -996,12 +1036,32 @@
         }
       }
     },
+    "Overflow" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多"
+          }
+        }
+      }
+    },
     "Other" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "其他"
+          }
+        }
+      }
+    },
+    "Pocket" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "口袋"
           }
         }
       }
@@ -1227,6 +1287,16 @@
         }
       }
     },
+    "Show floating button" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示悬浮按钮"
+          }
+        }
+      }
+    },
     "Show hidden items" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1323,6 +1393,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "显示 Tuck 图标"
+          }
+        }
+      }
+    },
+    "Size" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大小"
           }
         }
       }

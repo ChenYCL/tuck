@@ -13,7 +13,9 @@ final class TuckBarPanel: NSPanel {
     private(set) var currentSection: MenuBarSection.Name?
 
     private var isPinned: Bool {
-        appState.settings.useTuckBar && appState.settings.tuckBarAlwaysVisible
+        appState.settings.useTuckBar
+            && appState.settings.tuckBarAlwaysVisible
+            && !appState.settings.showFloatingHandle
     }
 
     init(appState: AppState) {

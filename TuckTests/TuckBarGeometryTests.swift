@@ -49,6 +49,27 @@ struct TuckBarGeometryTests {
         #expect(origin.y == 576)
     }
 
+    @Test func floatingHandleStaysOnScreenAndBelowMenuBar() {
+        let screen = CGRect(x: 0, y: 0, width: 1440, height: 900)
+        let origin = FloatingHandleGeometry.origin(
+            normalized: CGPoint(x: 1, y: 1),
+            size: 48,
+            screen: screen,
+            menuBarHeight: 24
+        )
+        #expect(origin.x == 1380)
+        #expect(origin.y == 816)
+
+        let normalized = FloatingHandleGeometry.normalized(
+            origin: origin,
+            size: 48,
+            screen: screen,
+            menuBarHeight: 24
+        )
+        #expect(normalized.x == 1)
+        #expect(normalized.y == 1)
+    }
+
     @Test func attachedEdgesMatchPlacement() {
         #expect(TuckBarLocation.below.attachedEdge == .top)
         #expect(TuckBarLocation.left.attachedEdge == .left)

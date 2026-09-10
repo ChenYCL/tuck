@@ -12,6 +12,11 @@ final class Settings {
     var useTuckBar: Bool { didSet { defaults.set(useTuckBar, for: .useTuckBar) } }
     var tuckBarLocation: TuckBarLocation { didSet { defaults.set(tuckBarLocation, for: .tuckBarLocation) } }
     var tuckBarAlwaysVisible: Bool { didSet { defaults.set(tuckBarAlwaysVisible, for: .tuckBarAlwaysVisible) } }
+    var showFloatingHandle: Bool { didSet { defaults.set(showFloatingHandle, for: .showFloatingHandle) } }
+    var floatingHandleSize: Double { didSet { defaults.set(floatingHandleSize, for: .floatingHandleSize) } }
+    var floatingHandleIcon: FloatingHandleIcon { didSet { defaults.set(floatingHandleIcon, for: .floatingHandleIcon) } }
+    var floatingHandleX: Double { didSet { defaults.set(floatingHandleX, for: .floatingHandleX) } }
+    var floatingHandleY: Double { didSet { defaults.set(floatingHandleY, for: .floatingHandleY) } }
     var showOnClick: Bool { didSet { defaults.set(showOnClick, for: .showOnClick) } }
     var showOnHover: Bool { didSet { defaults.set(showOnHover, for: .showOnHover) } }
     var showOnScroll: Bool { didSet { defaults.set(showOnScroll, for: .showOnScroll) } }
@@ -37,7 +42,12 @@ final class Settings {
         customIconIsTemplate = defaults.bool(for: .customIconIsTemplate, default: false)
         useTuckBar = defaults.bool(for: .useTuckBar, default: true)
         tuckBarLocation = defaults.rawValue(for: .tuckBarLocation, default: .below)
-        tuckBarAlwaysVisible = defaults.bool(for: .tuckBarAlwaysVisible, default: true)
+        tuckBarAlwaysVisible = defaults.bool(for: .tuckBarAlwaysVisible, default: false)
+        showFloatingHandle = defaults.bool(for: .showFloatingHandle, default: true)
+        floatingHandleSize = defaults.double(for: .floatingHandleSize, default: 48)
+        floatingHandleIcon = defaults.rawValue(for: .floatingHandleIcon, default: .chevron)
+        floatingHandleX = defaults.double(for: .floatingHandleX, default: 1)
+        floatingHandleY = defaults.double(for: .floatingHandleY, default: 0.62)
         showOnClick = defaults.bool(for: .showOnClick, default: true)
         showOnHover = defaults.bool(for: .showOnHover, default: false)
         showOnScroll = defaults.bool(for: .showOnScroll, default: true)

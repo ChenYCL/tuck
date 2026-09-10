@@ -28,6 +28,7 @@ final class AppState {
     @ObservationIgnored private(set) lazy var imageCache = ItemImageCache(appState: self)
     @ObservationIgnored private(set) lazy var search = SearchPanel(appState: self)
     @ObservationIgnored private(set) lazy var tuckBar = TuckBarPanel(appState: self)
+    @ObservationIgnored private(set) lazy var floatingHandle = FloatingHandlePanel(appState: self)
     @ObservationIgnored private(set) lazy var appearance = AppearanceManager(appState: self)
     @ObservationIgnored private(set) lazy var appearanceEditor = AppearanceEditorPanel(appState: self)
     @ObservationIgnored let spacing = SpacingManager()
@@ -64,8 +65,13 @@ final class AppState {
         itemStore.setup()
         imageCache.setup()
         updates.setup()
-        if settings.useTuckBar && settings.tuckBarAlwaysVisible {
-            Task { await tuckBar.showPinnedIfNeeded() }
+        if settings.useTuckBar {
+            if settings.showFloatingHandle {
+                floatingHandle.present()
+            }
+            if settings.tuckBarAlwaysVisible {
+                Task { await tuckBar.showPinnedIfNeeded() }
+            }
         }
     }
 

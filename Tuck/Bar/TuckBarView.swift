@@ -33,8 +33,8 @@ struct TuckBarView: View {
 
     private var barFill: Color {
         menuBarColorScheme == .dark
-            ? Color.black.opacity(0.42)
-            : Color.white.opacity(0.78)
+            ? Color.black.opacity(0.88)
+            : Color.white.opacity(0.94)
     }
 
     /// Small enough that a 33pt-tall bar reads as a shelf, not a capsule.

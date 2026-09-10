@@ -18,9 +18,21 @@ struct TuckBarView: View {
 
     private var isVertical: Bool { location.isVertical }
     private var isAttached: Bool { location.isAttached }
+    private var isDockStyle: Bool { location.usesDockChrome }
+
+    @State private var hoveredWindowID: CGWindowID?
+
+    private var iconSize: CGFloat {
+        isDockStyle ? CGFloat(appState.settings.edgeBarIconSize) : (appState.imageCache.menuBarHeight ?? screen.menuBarHeight)
+    }
+
+    private var dockPadding: CGFloat { isDockStyle ? 8 : 0 }
+    private var dockSpacing: CGFloat { isDockStyle ? max(4, iconSize * 0.14) : 0 }
+    private var magnification: CGFloat { isDockStyle ? CGFloat(appState.settings.edgeBarMagnification) : 1 }
 
     private var stripThickness: CGFloat {
-        appState.imageCache.menuBarHeight ?? screen.menuBarHeight
+        if isDockStyle { return iconSize + dockPadding * 2 }
+        return appState.imageCache.menuBarHeight ?? screen.menuBarHeight
     }
 
     /// Follow the real menu bar, which can stay light over a light wallpaper even
@@ -37,8 +49,11 @@ struct TuckBarView: View {
             : Color.white.opacity(0.94)
     }
 
-    /// Small enough that a 33pt-tall bar reads as a shelf, not a capsule.
-    private var cornerRadius: CGFloat { isAttached ? 6 : 12 }
+    /// Dock uses a continuous rounded rect; the below shelf only rounds the bottom.
+    private var cornerRadius: CGFloat {
+        if isDockStyle { return min(22, stripThickness / 2) }
+        return isAttached ? 6 : 12
+    }
 
     private var barShape: AttachedTabShape {
         AttachedTabShape(attached: location.attachedEdge, cornerRadius: cornerRadius)
@@ -58,9 +73,9 @@ struct TuckBarView: View {
 
     var body: some View {
         itemStack
-            .frame(width: isVertical ? stripThickness : nil, height: isVertical ? nil : stripThickness)
-            .padding(.horizontal, isVertical ? 0 : (showsItems ? 8 : 6))
-            .padding(.vertical, isVertical ? 8 : 0)
+            .frame(width: isVertical ? (isDockStyle ? nil : stripThickness) : nil, height: isVertical ? nil : stripThickness)
+            .padding(.horizontal, isVertical ? (isDockStyle ? dockPadding : 0) : (showsItems ? 8 : 6))
+            .padding(.vertical, isVertical ? (isDockStyle ? dockPadding : 8) : 0)
             .background {
                 barShape.fill(barFill)
             }
@@ -70,9 +85,12 @@ struct TuckBarView: View {
                     lineWidth: 0.5
                 )
             }
-            .clipShape(barShape)
             .environment(\.colorScheme, menuBarColorScheme)
-            .shadow(color: .black.opacity(isAttached ? 0.08 : 0.18), radius: isAttached ? 3 : 8, y: isAttached ? 1 : 3)
+            .shadow(
+                color: .black.opacity(isDockStyle ? 0.28 : (isAttached ? 0.08 : 0.18)),
+                radius: isDockStyle ? 14 : (isAttached ? 3 : 8),
+                y: isDockStyle ? 0 : (isAttached ? 1 : 3)
+            )
             .frame(
                 maxWidth: isVertical ? nil : screen.frame.width,
                 maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
@@ -96,7 +114,7 @@ struct TuckBarView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 8)
         } else if isVertical {
-            VStack(spacing: 0) {
+            VStack(spacing: dockSpacing) {
                 settingsButton
                 itemBody
             }
@@ -123,20 +141,20 @@ struct TuckBarView: View {
             EmptyView()
         } else if isVertical {
             ScrollView(.vertical) {
-                VStack(spacing: 0) {
+                VStack(spacing: dockSpacing) {
                     ForEach(items, id: \.windowID) { item in
-                        TuckBarItemView(item: item, panel: panel)
+                        dockItem(item)
                     }
                 }
             }
             .scrollIndicators(.hidden)
-            .defaultScrollAnchor(.top)
-            .frame(maxHeight: max(screen.frame.height - screen.menuBarHeight - 16, 40))
+            .defaultScrollAnchor(.center)
+            .frame(maxHeight: max(screen.frame.height - screen.menuBarHeight - 48, 40))
         } else {
             ScrollView(.horizontal) {
                 HStack(spacing: 0) {
                     ForEach(items, id: \.windowID) { item in
-                        TuckBarItemView(item: item, panel: panel)
+                        dockItem(item)
                     }
                 }
             }
@@ -177,6 +195,21 @@ struct TuckBarView: View {
         .accessibilityLabel(showsItems ? String(localized: "Settings") : String(localized: "Show hidden menu bar items"))
         .padding(isVertical ? EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: 0) : EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
+
+    private func dockItem(_ item: MenuBarItem) -> some View {
+        let hovering = hoveredWindowID == item.windowID
+        let scale = hovering ? magnification : 1
+        let pop: CGFloat = hovering ? (iconSize * (magnification - 1) * 0.35) : 0
+        return TuckBarItemView(item: item, panel: panel, preferredSize: isDockStyle ? iconSize : nil)
+            .frame(width: isDockStyle ? iconSize : nil, height: isDockStyle ? iconSize : nil)
+            .scaleEffect(scale)
+            .offset(x: location == .right ? -pop : (location == .left ? pop : 0))
+            .animation(.spring(duration: 0.22, bounce: 0.18), value: hovering)
+            .onHover { inside in
+                hoveredWindowID = inside ? item.windowID : nil
+            }
+            .zIndex(hovering ? 1 : 0)
+    }
 }
 
 // MARK: - TuckBarItemView
@@ -186,6 +219,7 @@ private struct TuckBarItemView: View {
 
     let item: MenuBarItem
     let panel: TuckBarPanel
+    var preferredSize: CGFloat? = nil
 
     private var image: NSImage? {
         guard let cgImage = appState.imageCache.images[item.info] else { return nil }
@@ -198,11 +232,15 @@ private struct TuckBarItemView: View {
         Group {
             if let image {
                 Image(nsImage: image)
+                    .resizable()
+                    .interpolation(.high)
+                    .scaledToFit()
             } else {
-                ItemFallbackIcon(item: item)
-                    .padding(.horizontal, 4)
+                ItemFallbackIcon(item: item, size: preferredSize ?? 18)
+                    .padding(.horizontal, preferredSize == nil ? 4 : 0)
             }
         }
+        .frame(width: preferredSize, height: preferredSize)
         .contentShape(Rectangle())
         .overlay {
             TuckBarItemClickView(item: item, action: performAction)

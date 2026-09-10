@@ -17,6 +17,9 @@ final class Settings {
     var floatingHandleIcon: FloatingHandleIcon { didSet { defaults.set(floatingHandleIcon, for: .floatingHandleIcon) } }
     var floatingHandleX: Double { didSet { defaults.set(floatingHandleX, for: .floatingHandleX) } }
     var floatingHandleY: Double { didSet { defaults.set(floatingHandleY, for: .floatingHandleY) } }
+    var edgeBarIconSize: Double { didSet { defaults.set(edgeBarIconSize, for: .edgeBarIconSize) } }
+    var edgeBarEdgeInset: Double { didSet { defaults.set(edgeBarEdgeInset, for: .edgeBarEdgeInset) } }
+    var edgeBarMagnification: Double { didSet { defaults.set(edgeBarMagnification, for: .edgeBarMagnification) } }
     var showOnClick: Bool { didSet { defaults.set(showOnClick, for: .showOnClick) } }
     var showOnHover: Bool { didSet { defaults.set(showOnHover, for: .showOnHover) } }
     var showOnScroll: Bool { didSet { defaults.set(showOnScroll, for: .showOnScroll) } }
@@ -48,6 +51,9 @@ final class Settings {
         floatingHandleIcon = defaults.rawValue(for: .floatingHandleIcon, default: .chevron)
         floatingHandleX = defaults.double(for: .floatingHandleX, default: 1)
         floatingHandleY = defaults.double(for: .floatingHandleY, default: 0.62)
+        edgeBarIconSize = defaults.double(for: .edgeBarIconSize, default: 40)
+        edgeBarEdgeInset = defaults.double(for: .edgeBarEdgeInset, default: 12)
+        edgeBarMagnification = defaults.double(for: .edgeBarMagnification, default: 1.35)
         showOnClick = defaults.bool(for: .showOnClick, default: true)
         showOnHover = defaults.bool(for: .showOnHover, default: false)
         showOnScroll = defaults.bool(for: .showOnScroll, default: true)

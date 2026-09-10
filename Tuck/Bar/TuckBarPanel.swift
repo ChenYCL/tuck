@@ -95,6 +95,9 @@ final class TuckBarPanel: NSPanel {
             let useBar = appState.settings.useTuckBar
             let alwaysVisible = appState.settings.tuckBarAlwaysVisible
             _ = appState.settings.tuckBarLocation
+            _ = appState.settings.edgeBarIconSize
+            _ = appState.settings.edgeBarEdgeInset
+            _ = appState.settings.edgeBarMagnification
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 if useBar && alwaysVisible {
@@ -175,7 +178,8 @@ final class TuckBarPanel: NSPanel {
             screen: TuckBarGeometry.Screen(frame: screen.frame, menuBarHeight: screen.menuBarHeight),
             mouseX: NSEvent.mouseLocation.x,
             tuckIconMidX: (location == .tuckIcon || location == .dynamic) ? tuckIconMidX(on: screen) : nil,
-            isMouseInEmptySpace: appState.interaction.isMouseInsideEmptyMenuBarSpace
+            isMouseInEmptySpace: appState.interaction.isMouseInsideEmptyMenuBarSpace,
+            edgeInset: TuckBarGeometry.edgeInset(for: location, configured: CGFloat(appState.settings.edgeBarEdgeInset))
         )
         setFrameOrigin(origin)
     }

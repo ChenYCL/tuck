@@ -109,6 +109,35 @@ struct GeneralPane: View {
                         Text("Mouse pointer").tag(TuckBarLocation.mousePointer)
                         Text("Tuck icon").tag(TuckBarLocation.tuckIcon)
                     }
+                    if settings.tuckBarLocation == .left || settings.tuckBarLocation == .right {
+                        Text("Left and right edges sit like the Dock: vertically centered, inset from the screen, with a size you can change.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        LabeledContent("Icon size") {
+                            HStack {
+                                Slider(value: $settings.edgeBarIconSize, in: 24...64, step: 2)
+                                Text("\(Int(settings.edgeBarIconSize))")
+                                    .monospacedDigit()
+                                    .frame(width: 28, alignment: .trailing)
+                            }
+                        }
+                        LabeledContent("Edge padding") {
+                            HStack {
+                                Slider(value: $settings.edgeBarEdgeInset, in: 6...28, step: 2)
+                                Text("\(Int(settings.edgeBarEdgeInset))")
+                                    .monospacedDigit()
+                                    .frame(width: 28, alignment: .trailing)
+                            }
+                        }
+                        LabeledContent("Magnification") {
+                            HStack {
+                                Slider(value: $settings.edgeBarMagnification, in: 1...1.8, step: 0.05)
+                                Text(String(format: "%.0f%%", settings.edgeBarMagnification * 100))
+                                    .monospacedDigit()
+                                    .frame(width: 44, alignment: .trailing)
+                            }
+                        }
+                    }
                 }
             }
 

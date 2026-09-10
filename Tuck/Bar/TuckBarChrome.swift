@@ -159,8 +159,7 @@ extension TuckBarLocation {
     var attachedEdge: AttachedTabShape.AttachedEdge {
         switch self {
         case .below: .top
-        case .left: .left
-        case .right: .right
+        case .left, .right: .none
         case .dynamic, .mousePointer, .tuckIcon: .none
         }
     }

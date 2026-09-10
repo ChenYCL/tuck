@@ -483,6 +483,16 @@
         }
       }
     },
+    "Edge padding" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "边缘内边距"
+          }
+        }
+      }
+    },
     "Ellipsis" : {
       "localizations" : {
         "zh-Hans" : {
@@ -683,6 +693,16 @@
         }
       }
     },
+    "Icon size" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图标大小"
+          }
+        }
+      }
+    },
     "Icon" : {
       "localizations" : {
         "zh-Hans" : {
@@ -804,6 +824,16 @@
         }
       }
     },
+    "Left and right edges sit like the Dock: vertically centered, inset from the screen, with a size you can change." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左右两侧像 Dock：垂直居中、离屏幕边缘留空，大小可调。"
+          }
+        }
+      }
+    },
     "Launch at login" : {
       "localizations" : {
         "zh-Hans" : {
@@ -840,6 +870,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "位置"
+          }
+        }
+      }
+    },
+    "Magnification" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放大"
           }
         }
       }

@@ -13,9 +13,34 @@ enum TuckBarGeometry {
         var menuBarHeight: CGFloat
     }
 
-    /// Extra gap under the menu bar for pointer-following HUDs. Attached bars sit flush.
+    /// Extra gap under the menu bar for pointer-following HUDs. Below sits flush;
+    /// left/right use a Dock-style inset instead.
     static func menuBarGap(for location: TuckBarLocation) -> CGFloat {
-        location.isAttached ? 0 : 4
+        switch location {
+        case .below: 0
+        case .left, .right: 0
+        case .dynamic, .mousePointer, .tuckIcon: 4
+        }
+    }
+
+    /// Distance from the screen edge. Left/right float inward like the Dock.
+    static func edgeInset(for location: TuckBarLocation, configured: CGFloat) -> CGFloat {
+        switch location {
+        case .left, .right: configured
+        default: 0
+        }
+    }
+
+    /// Vertically center a left/right bar in the area below the menu bar.
+    static func verticallyCenteredY(barHeight: CGFloat, screen: Screen) -> CGFloat {
+        let top = screen.frame.maxY - screen.menuBarHeight
+        let bottom = screen.frame.minY
+        let mid = (top + bottom) / 2
+        let y = mid - barHeight / 2
+        let maxY = top - barHeight
+        let minY = bottom
+        guard minY <= maxY else { return minY }
+        return y.clamped(to: minY...maxY)
     }
 
     /// Below + always-visible uses a compact handle so the extra row does not
@@ -39,7 +64,8 @@ enum TuckBarGeometry {
         screen: Screen,
         mouseX: CGFloat,
         tuckIconMidX: CGFloat?,
-        isMouseInEmptySpace: Bool
+        isMouseInEmptySpace: Bool,
+        edgeInset: CGFloat = 12
     ) -> CGPoint {
         let yBelowMenuBar = screen.frame.maxY - screen.menuBarHeight - barSize.height - menuBarGap(for: location)
 
@@ -70,9 +96,15 @@ enum TuckBarGeometry {
         case .below:
             return CGPoint(x: clampedX(screen.frame.maxX - barSize.width), y: yBelowMenuBar)
         case .left:
-            return CGPoint(x: screen.frame.minX, y: clampedY(yBelowMenuBar))
+            return CGPoint(
+                x: screen.frame.minX + edgeInset,
+                y: verticallyCenteredY(barHeight: barSize.height, screen: screen)
+            )
         case .right:
-            return CGPoint(x: screen.frame.maxX - barSize.width, y: clampedY(yBelowMenuBar))
+            return CGPoint(
+                x: screen.frame.maxX - barSize.width - edgeInset,
+                y: verticallyCenteredY(barHeight: barSize.height, screen: screen)
+            )
         case .dynamic:
             let x = isMouseInEmptySpace ? mousePointerX() : tuckIconX()
             return CGPoint(x: x, y: yBelowMenuBar)

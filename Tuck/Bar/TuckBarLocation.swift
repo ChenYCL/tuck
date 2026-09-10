@@ -25,6 +25,14 @@ enum TuckBarLocation: String, CaseIterable, Codable, Identifiable {
         }
     }
 
+    /// Left/right use a floating rounded Dock, not a flush attached tab.
+    var usesDockChrome: Bool {
+        switch self {
+        case .left, .right: true
+        default: false
+        }
+    }
+
     var displayName: String {
         switch self {
         case .below: String(localized: "Below menu bar")

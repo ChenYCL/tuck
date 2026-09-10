@@ -23,30 +23,32 @@ struct TuckBarGeometryTests {
         #expect(origin.y == 842)
     }
 
-    @Test func leftSitsOnLeadingEdgeBelowMenuBar() {
+    @Test func leftDockIsCenteredAndInset() {
         let origin = TuckBarGeometry.origin(
             location: .left,
             barSize: verticalBar,
             screen: screen,
             mouseX: 0,
             tuckIconMidX: nil,
-            isMouseInEmptySpace: false
+            isMouseInEmptySpace: false,
+            edgeInset: 12
         )
-        #expect(origin.x == 0)
-        #expect(origin.y == 576)
+        #expect(origin.x == 12)
+        #expect(origin.y == 288)
     }
 
-    @Test func rightSitsOnTrailingEdgeBelowMenuBar() {
+    @Test func rightDockIsCenteredAndInset() {
         let origin = TuckBarGeometry.origin(
             location: .right,
             barSize: verticalBar,
             screen: screen,
             mouseX: 0,
             tuckIconMidX: nil,
-            isMouseInEmptySpace: false
+            isMouseInEmptySpace: false,
+            edgeInset: 12
         )
-        #expect(origin.x == 1400)
-        #expect(origin.y == 576)
+        #expect(origin.x == 1388)
+        #expect(origin.y == 288)
     }
 
     @Test func floatingHandleStaysOnScreenAndBelowMenuBar() {
@@ -72,8 +74,8 @@ struct TuckBarGeometryTests {
 
     @Test func attachedEdgesMatchPlacement() {
         #expect(TuckBarLocation.below.attachedEdge == .top)
-        #expect(TuckBarLocation.left.attachedEdge == .left)
-        #expect(TuckBarLocation.right.attachedEdge == .right)
+        #expect(TuckBarLocation.left.attachedEdge == .none)
+        #expect(TuckBarLocation.right.attachedEdge == .none)
         #expect(TuckBarLocation.mousePointer.attachedEdge == .none)
     }
 
@@ -86,6 +88,8 @@ struct TuckBarGeometryTests {
 
     @Test func attachedBarsSitFlushAndPointerBarsLeaveAGap() {
         #expect(TuckBarGeometry.menuBarGap(for: .below) == 0)
+        #expect(TuckBarGeometry.edgeInset(for: .left, configured: 12) == 12)
+        #expect(TuckBarGeometry.edgeInset(for: .below, configured: 12) == 0)
         #expect(TuckBarGeometry.menuBarGap(for: .left) == 0)
         #expect(TuckBarGeometry.menuBarGap(for: .mousePointer) == 4)
     }

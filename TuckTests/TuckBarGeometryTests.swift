@@ -72,6 +72,14 @@ struct TuckBarGeometryTests {
         #expect(normalized.y == 1)
     }
 
+    @Test func dockMagnificationFallsOffWithDistance() {
+        #expect(abs(TuckBarGeometry.dockScale(distance: 0, maxScale: 1.6) - 1.6) < 0.0001)
+        #expect(abs(TuckBarGeometry.dockScale(distance: 2.2, maxScale: 1.6) - 1) < 0.0001)
+        let neighbor = TuckBarGeometry.dockScale(distance: 1, maxScale: 1.6)
+        #expect(neighbor > 1)
+        #expect(neighbor < 1.6)
+    }
+
     @Test func dockMapsSystemExtrasToSymbols() {
         #expect(DockItemIcon.symbolName(title: "com.apple.menuextra.wifi", displayName: "Wi-Fi", namespace: "com.apple.controlcenter") == "wifi")
         #expect(DockItemIcon.symbolName(title: "com.apple.menuextra.battery", displayName: "Battery", namespace: nil) == "battery.100percent")

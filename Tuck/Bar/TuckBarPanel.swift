@@ -178,22 +178,11 @@ final class TuckBarPanel: NSPanel {
         hostingView.layer?.contentsScale = screen?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
         isOpaque = false
         backgroundColor = .clear
-        if appState.settings.tuckBarLocation.usesDockChrome {
-            let radius = min(22, min(frame.width, frame.height) / 2)
-            hostingView.layer?.cornerRadius = radius
-            hostingView.layer?.cornerCurve = .continuous
-            hostingView.layer?.masksToBounds = true
-            if let content = contentView {
-                content.wantsLayer = true
-                content.layer?.backgroundColor = .clear
-                content.layer?.cornerRadius = radius
-                content.layer?.cornerCurve = .continuous
-                content.layer?.masksToBounds = true
-            }
-        } else {
-            hostingView.layer?.cornerRadius = 0
-            hostingView.layer?.masksToBounds = false
-        }
+        hostingView.layer?.cornerRadius = 0
+        hostingView.layer?.masksToBounds = false
+        contentView?.wantsLayer = true
+        contentView?.layer?.backgroundColor = .clear
+        contentView?.layer?.masksToBounds = false
     }
 
     private func updateOrigin(for screen: NSScreen) {

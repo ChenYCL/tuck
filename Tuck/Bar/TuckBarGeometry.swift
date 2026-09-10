@@ -50,6 +50,13 @@ enum TuckBarGeometry {
         return expanded
     }
 
+    /// Apple Dock-style falloff: the hovered icon is largest, neighbors shrink
+    /// with a cosine curve so they make room instead of stacking.
+    static func dockScale(distance: CGFloat, range: CGFloat = 2.2, maxScale: CGFloat) -> CGFloat {
+        guard maxScale > 1.01, distance < range else { return 1 }
+        return 1 + (maxScale - 1) * 0.5 * (1 + Foundation.cos(.pi * distance / range))
+    }
+
     static func axis(for location: TuckBarLocation) -> Axis {
         switch location {
         case .left, .right: .vertical

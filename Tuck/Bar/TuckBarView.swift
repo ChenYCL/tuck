@@ -72,40 +72,73 @@ struct TuckBarView: View {
     }
 
     var body: some View {
-        itemStack
-            .background(Color.clear)
-            .frame(width: isVertical ? (isDockStyle ? nil : stripThickness) : nil, height: isVertical ? nil : stripThickness)
-            .padding(.horizontal, isVertical ? (isDockStyle ? dockPadding : 0) : (showsItems ? 8 : 6))
-            .padding(.vertical, isVertical ? (isDockStyle ? dockPadding : 8) : 0)
-            .background {
-                barShape.fill(barFill)
+        Group {
+            if isDockStyle {
+                dockBar
+            } else {
+                itemStack
+                    .background(Color.clear)
+                    .frame(width: isVertical ? stripThickness : nil, height: isVertical ? nil : stripThickness)
+                    .padding(.horizontal, isVertical ? 0 : (showsItems ? 8 : 6))
+                    .padding(.vertical, isVertical ? 8 : 0)
+                    .background { barShape.fill(barFill) }
+                    .overlay {
+                        barStroke.stroke(
+                            Color.primary.opacity(menuBarColorScheme == .dark ? 0.16 : 0.10),
+                            lineWidth: 0.5
+                        )
+                    }
+                    .clipShape(barShape)
+                    .shadow(color: .black.opacity(isAttached ? 0.08 : 0.18), radius: isAttached ? 3 : 8, y: isAttached ? 1 : 3)
             }
-            .overlay {
-                barStroke.stroke(
-                    Color.primary.opacity(menuBarColorScheme == .dark ? 0.16 : 0.10),
-                    lineWidth: 0.5
-                )
+        }
+        .environment(\.colorScheme, menuBarColorScheme)
+        .frame(
+            maxWidth: isVertical ? nil : screen.frame.width,
+            maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
+        )
+        .animation(.spring(duration: 0.28, bounce: 0), value: showsItems)
+        .onHover { hovering in
+            if hovering {
+                panel.cancelCollapse()
+                panel.expand()
+            } else {
+                panel.scheduleCollapse()
             }
-            .clipShape(barShape)
-            .environment(\.colorScheme, menuBarColorScheme)
-            .shadow(
-                color: .black.opacity(isDockStyle ? 0.28 : (isAttached ? 0.08 : 0.18)),
-                radius: isDockStyle ? 14 : (isAttached ? 3 : 8),
-                y: isDockStyle ? 0 : (isAttached ? 1 : 3)
-            )
-            .frame(
-                maxWidth: isVertical ? nil : screen.frame.width,
-                maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
-            )
-            .animation(.spring(duration: 0.28, bounce: 0), value: showsItems)
-            .onHover { hovering in
-                if hovering {
-                    panel.cancelCollapse()
-                    panel.expand()
-                } else {
-                    panel.scheduleCollapse()
+        }
+    }
+
+    /// Plate stays a rounded material capsule; icons live in a magnifying layout
+    /// so they spread apart like the Dock instead of stacking.
+    private var dockBar: some View {
+        let overflow = iconSize * max(0, magnification - 1)
+        let hoveredIndex = items.firstIndex { $0.windowID == hoveredWindowID }
+        return ZStack(alignment: location == .right ? .trailing : .leading) {
+            Capsule(style: .continuous)
+                .fill(.regularMaterial)
+                .overlay {
+                    Capsule(style: .continuous)
+                        .strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.22 : 0.08), lineWidth: 0.5)
+                }
+                .shadow(color: .black.opacity(menuBarColorScheme == .dark ? 0.5 : 0.18), radius: 18, y: 0)
+                .frame(width: iconSize + dockPadding * 2)
+                .padding(.vertical, dockPadding)
+
+            MagnifyingDockLayout(
+                iconSize: iconSize,
+                spacing: dockSpacing,
+                magnification: magnification,
+                hoveredIndex: hoveredIndex,
+                growSign: location == .right ? -1 : 1
+            ) {
+                ForEach(Array(items.enumerated()), id: \.element.windowID) { index, item in
+                    dockCell(item, index: index)
                 }
             }
+            .padding(.vertical, dockPadding)
+        }
+        .padding(location == .right ? .leading : .trailing, overflow)
+        .animation(.spring(duration: 0.22, bounce: 0.1), value: hoveredWindowID)
     }
 
     @ViewBuilder
@@ -204,37 +237,34 @@ struct TuckBarView: View {
     }
 
     private func dockItem(_ item: MenuBarItem) -> some View {
-        let hovering = hoveredWindowID == item.windowID
-        let scale = hovering ? magnification : 1
-        let pop: CGFloat = hovering ? (iconSize * (magnification - 1) * 0.35) : 0
-        return Group {
-            if isDockStyle {
-                DockItemIconView(item: item, size: iconSize)
-                    .overlay {
-                        TuckBarItemClickView(item: item, action: { button in
-                            if appState.settings.tuckBarAlwaysVisible {
-                                panel.collapseToHandle()
-                            } else {
-                                panel.close()
-                            }
-                            Task {
-                                try? await Task.sleep(for: .milliseconds(25))
-                                appState.itemMover.tempShowItem(item, clickWhenFinished: true, mouseButton: button)
-                            }
-                        })
-                    }
-            } else {
-                TuckBarItemView(item: item, panel: panel, preferredSize: nil, prefersAppIcon: false)
-            }
-        }
-        .frame(width: isDockStyle ? iconSize : nil, height: isDockStyle ? iconSize : nil)
+        TuckBarItemView(item: item, panel: panel, preferredSize: nil, prefersAppIcon: false)
+    }
+
+    private func dockCell(_ item: MenuBarItem, index: Int) -> some View {
+        let scale = TuckBarGeometry.dockScale(
+            distance: hoveredWindowID == nil ? 99 : CGFloat(abs((items.firstIndex { $0.windowID == hoveredWindowID } ?? 0) - index)),
+            maxScale: magnification
+        )
+        return DockItemIconView(item: item, size: iconSize)
             .scaleEffect(scale)
-            .offset(x: location == .right ? -pop : (location == .left ? pop : 0))
-            .animation(.spring(duration: 0.22, bounce: 0.18), value: hovering)
+            .frame(width: iconSize, height: iconSize)
+            .overlay {
+                TuckBarItemClickView(item: item, action: { button in
+                    if appState.settings.tuckBarAlwaysVisible {
+                        panel.collapseToHandle()
+                    } else {
+                        panel.close()
+                    }
+                    Task {
+                        try? await Task.sleep(for: .milliseconds(25))
+                        appState.itemMover.tempShowItem(item, clickWhenFinished: true, mouseButton: button)
+                    }
+                })
+            }
             .onHover { inside in
                 hoveredWindowID = inside ? item.windowID : nil
             }
-            .zIndex(hovering ? 1 : 0)
+            .zIndex(scale > 1.01 ? 1 : 0)
     }
 }
 

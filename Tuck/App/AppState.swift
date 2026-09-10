@@ -8,6 +8,7 @@ final class Navigation {
     var selectedPane: SettingsPane = .general
     var isSettingsPresented = false
     var isTuckBarPresented = false
+    var isTuckBarExpanded = false
     var isSearchPresented = false
 }
 

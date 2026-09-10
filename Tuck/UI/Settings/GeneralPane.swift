@@ -60,7 +60,7 @@ struct GeneralPane: View {
                     .foregroundStyle(.secondary)
                 if settings.useTuckBar {
                     Toggle("Always show Tuck Bar", isOn: $settings.tuckBarAlwaysVisible)
-                    Text("Keep the extra bar on screen so hidden items stay reachable when the menu bar is full.")
+                    Text("Below the menu bar, keep a small handle so hidden items do not cover the window. Hover the handle to expand. Left and right edges stay as a full strip.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     Picker("Location", selection: $settings.tuckBarLocation) {

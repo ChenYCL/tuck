@@ -75,10 +75,18 @@ struct TuckBarView: View {
         }
     }
 
+    private var showsItems: Bool {
+        TuckBarGeometry.showsItems(
+            location: location,
+            alwaysVisible: appState.settings.tuckBarAlwaysVisible,
+            expanded: appState.navigation.isTuckBarExpanded
+        )
+    }
+
     var body: some View {
         itemStack
             .frame(width: isVertical ? stripThickness : nil, height: isVertical ? nil : stripThickness)
-            .padding(.horizontal, isVertical ? 0 : 8)
+            .padding(.horizontal, isVertical ? 0 : (showsItems ? 8 : 6))
             .padding(.vertical, isVertical ? 8 : 0)
             .background {
                 barShape.fill(barFill)
@@ -93,6 +101,14 @@ struct TuckBarView: View {
                 maxWidth: isVertical ? nil : screen.frame.width,
                 maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
             )
+            .onHover { hovering in
+                if hovering {
+                    panel.cancelCollapse()
+                    panel.expand()
+                } else {
+                    panel.scheduleCollapse()
+                }
+            }
     }
 
     @ViewBuilder
@@ -117,7 +133,9 @@ struct TuckBarView: View {
 
     @ViewBuilder
     private var itemBody: some View {
-        if items.isEmpty {
+        if !showsItems {
+            EmptyView()
+        } else if items.isEmpty {
             EmptyView()
         } else if isVertical {
             ScrollView(.vertical) {
@@ -146,14 +164,24 @@ struct TuckBarView: View {
 
     private var settingsButton: some View {
         Button {
-            appState.openSettingsWindow(pane: .layout)
+            if showsItems, location == .below, appState.settings.tuckBarAlwaysVisible {
+                panel.collapseToHandle()
+            } else if !showsItems {
+                panel.expand()
+            } else {
+                appState.openSettingsWindow(pane: .layout)
+            }
         } label: {
             Group {
-                if let image = appState.settings.tuckIcon.image(state: .hideItems, isTemplate: appState.settings.customIconIsTemplate) {
+                if !showsItems {
+                    Image(systemName: "chevron.compact.down")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                } else if let image = appState.settings.tuckIcon.image(state: .hideItems, isTemplate: appState.settings.customIconIsTemplate) {
                     Image(nsImage: image)
                 } else {
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 6, weight: .semibold))
+                    Image(systemName: "chevron.compact.up")
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -161,8 +189,8 @@ struct TuckBarView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help(String(localized: "Settings"))
-        .accessibilityLabel(String(localized: "Settings"))
+        .help(showsItems ? String(localized: "Settings") : String(localized: "Show hidden menu bar items"))
+        .accessibilityLabel(showsItems ? String(localized: "Settings") : String(localized: "Show hidden menu bar items"))
         .padding(isVertical ? EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: 0) : EdgeInsets(top: 0, leading: 2, bottom: 0, trailing: 2))
     }
 }
@@ -200,7 +228,9 @@ private struct TuckBarItemView: View {
     }
 
     private func performAction(_ button: CGMouseButton) {
-        if !appState.settings.tuckBarAlwaysVisible {
+        if appState.settings.tuckBarAlwaysVisible {
+            panel.collapseToHandle()
+        } else {
             panel.close()
         }
         Task {

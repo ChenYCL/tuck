@@ -62,7 +62,10 @@ final class MenuBarSection {
 
     func show() {
         if isTuckBarPinned {
-            Task { await appState.tuckBar.showPinnedIfNeeded() }
+            Task {
+                await appState.tuckBar.showPinnedIfNeeded()
+                appState.tuckBar.expand()
+            }
             return
         }
         guard isHidden, controlItem.isAddedToMenuBar else { return }
@@ -97,6 +100,7 @@ final class MenuBarSection {
 
     func hide() {
         if isTuckBarPinned {
+            appState.tuckBar.collapseToHandle()
             stopRehideTimer()
             return
         }

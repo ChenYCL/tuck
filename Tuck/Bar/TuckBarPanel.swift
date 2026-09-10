@@ -8,6 +8,7 @@ final class TuckBarPanel: NSPanel {
     private unowned let appState: AppState
     private var hostingView: NSHostingView<AnyView>?
     private var observers: [Any] = []
+    private var collapseTask: Task<Void, Never>?
 
     private(set) var currentSection: MenuBarSection.Name?
 
@@ -103,6 +104,46 @@ final class TuckBarPanel: NSPanel {
                 }
             }
         })
+
+        observers.append(Observe.track { [weak self] in
+            guard let self else { return }
+            _ = appState.navigation.isTuckBarExpanded
+            relayoutIfVisible()
+        })
+    }
+
+    func expand() {
+        cancelCollapse()
+        if !appState.navigation.isTuckBarExpanded {
+            appState.navigation.isTuckBarExpanded = true
+        }
+        if ScreenCapture.cachedHasPermission(), let section = currentSection {
+            Task { await appState.imageCache.updateCache(sections: [section]) }
+        }
+    }
+
+    func collapseToHandle() {
+        cancelCollapse()
+        guard appState.settings.tuckBarLocation == .below else { return }
+        appState.navigation.isTuckBarExpanded = false
+    }
+
+    func scheduleCollapse() {
+        collapseTask?.cancel()
+        let delay = max(appState.settings.showOnHoverDelay, 0.15)
+        collapseTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard let self, !Task.isCancelled else { return }
+            if appState.interaction.isMouseInsideTuckBar || appState.interaction.isMouseInsideMenuBar {
+                return
+            }
+            collapseToHandle()
+        }
+    }
+
+    func cancelCollapse() {
+        collapseTask?.cancel()
+        collapseTask = nil
     }
 
     private func relayoutIfVisible() {
@@ -175,6 +216,9 @@ final class TuckBarPanel: NSPanel {
     func show(section: MenuBarSection.Name, on screen: NSScreen) async {
         // Important that navigation state and current section are set before updating the cache.
         appState.navigation.isTuckBarPresented = true
+        if !(isPinned && appState.settings.tuckBarLocation == .below) {
+            appState.navigation.isTuckBarExpanded = true
+        }
         currentSection = section
 
         await appState.itemStore.refreshIfNeeded()
@@ -205,6 +249,8 @@ final class TuckBarPanel: NSPanel {
         hostingView = nil
         currentSection = nil
         appState.navigation.isTuckBarPresented = false
+        appState.navigation.isTuckBarExpanded = false
+        cancelCollapse()
         super.close()
     }
 }

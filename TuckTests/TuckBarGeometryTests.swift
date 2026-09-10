@@ -49,6 +49,13 @@ struct TuckBarGeometryTests {
         #expect(origin.y == 576)
     }
 
+    @Test func belowAlwaysVisibleStaysCollapsedUntilExpanded() {
+        #expect(TuckBarGeometry.showsItems(location: .below, alwaysVisible: true, expanded: false) == false)
+        #expect(TuckBarGeometry.showsItems(location: .below, alwaysVisible: true, expanded: true) == true)
+        #expect(TuckBarGeometry.showsItems(location: .left, alwaysVisible: true, expanded: false) == true)
+        #expect(TuckBarGeometry.showsItems(location: .below, alwaysVisible: false, expanded: false) == true)
+    }
+
     @Test func attachedBarsSitFlushAndPointerBarsLeaveAGap() {
         #expect(TuckBarGeometry.menuBarGap(for: .below) == 0)
         #expect(TuckBarGeometry.menuBarGap(for: .left) == 0)

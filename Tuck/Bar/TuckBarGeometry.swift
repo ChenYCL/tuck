@@ -18,6 +18,13 @@ enum TuckBarGeometry {
         location.isAttached ? 0 : 4
     }
 
+    /// Below + always-visible uses a compact handle so the extra row does not
+    /// cover the window title bar. Other placements show items immediately.
+    static func showsItems(location: TuckBarLocation, alwaysVisible: Bool, expanded: Bool) -> Bool {
+        guard alwaysVisible, location == .below else { return true }
+        return expanded
+    }
+
     static func axis(for location: TuckBarLocation) -> Axis {
         switch location {
         case .left, .right: .vertical

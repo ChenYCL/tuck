@@ -754,6 +754,26 @@
         }
       }
     },
+    "Below the menu bar, keep a small handle so hidden items do not cover the window. Hover the handle to expand. Left and right edges stay as a full strip." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放在菜单栏下方时只留一个小把手，避免挡住窗口。悬停展开。左右两侧仍显示完整条栏。"
+          }
+        }
+      }
+    },
+    "Show hidden menu bar items" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示隐藏的菜单栏项目"
+          }
+        }
+      }
+    },
     "Launch at login" : {
       "localizations" : {
         "zh-Hans" : {

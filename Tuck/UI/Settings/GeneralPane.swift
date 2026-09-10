@@ -129,14 +129,6 @@ struct GeneralPane: View {
                                     .frame(width: 28, alignment: .trailing)
                             }
                         }
-                        LabeledContent("Magnification") {
-                            HStack {
-                                Slider(value: $settings.edgeBarMagnification, in: 1...1.8, step: 0.05)
-                                Text(String(format: "%.0f%%", settings.edgeBarMagnification * 100))
-                                    .monospacedDigit()
-                                    .frame(width: 44, alignment: .trailing)
-                            }
-                        }
                     }
                 }
             }

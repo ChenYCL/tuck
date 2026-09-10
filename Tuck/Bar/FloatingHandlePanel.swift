@@ -61,16 +61,41 @@ final class FloatingHandlePanel: NSPanel {
         hosting.layer?.backgroundColor = .clear
         hosting.layer?.isOpaque = false
         hosting.layer?.contentsScale = NSScreen.main?.backingScaleFactor ?? 2
-        contentView = hosting
+        hosting.frame = NSRect(origin: .zero, size: NSSize(width: size, height: size))
+
+        let clip = NSView(frame: hosting.frame)
+        clip.wantsLayer = true
+        clip.layer?.backgroundColor = .clear
+        clip.layer?.isOpaque = false
+        clip.layer?.cornerRadius = size / 2
+        clip.layer?.masksToBounds = true
+        clip.layer?.contentsScale = NSScreen.main?.backingScaleFactor ?? 2
+        hosting.autoresizingMask = [.width, .height]
+        clip.addSubview(hosting)
+
+        contentView = clip
         setContentSize(NSSize(width: size, height: size))
+        applyCircleClip(size: size)
         applyStoredFrame()
         orderFrontRegardless()
+    }
+
+    private func applyCircleClip(size: CGFloat) {
+        isOpaque = false
+        backgroundColor = .clear
+        hasShadow = false
+        contentView?.wantsLayer = true
+        contentView?.layer?.backgroundColor = .clear
+        contentView?.layer?.isOpaque = false
+        contentView?.layer?.cornerRadius = size / 2
+        contentView?.layer?.masksToBounds = true
     }
 
     func applyStoredFrame() {
         guard let screen = NSScreen.screenWithActiveMenuBar ?? NSScreen.screens.first ?? NSScreen.main else { return }
         let size = CGFloat(appState.settings.floatingHandleSize)
         setContentSize(NSSize(width: size, height: size))
+        applyCircleClip(size: size)
         let origin = FloatingHandleGeometry.origin(
             normalized: CGPoint(x: appState.settings.floatingHandleX, y: appState.settings.floatingHandleY),
             size: size,
@@ -153,8 +178,7 @@ struct FloatingHandleView: View {
                 .shadow(color: .black.opacity(0.18), radius: 0.5, y: 0.5)
         }
         .frame(width: size, height: size)
-        .compositingGroup()
-        .shadow(color: .black.opacity(0.22), radius: 10, y: 4)
+        .clipShape(Circle())
         .contentShape(Circle())
         .overlay {
             HandleClickDragView(panel: panel)

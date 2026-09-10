@@ -20,15 +20,12 @@ struct TuckBarView: View {
     private var isAttached: Bool { location.isAttached }
     private var isDockStyle: Bool { location.usesDockChrome }
 
-    @State private var hoveredWindowID: CGWindowID?
-
     private var iconSize: CGFloat {
         isDockStyle ? CGFloat(appState.settings.edgeBarIconSize) : (appState.imageCache.menuBarHeight ?? screen.menuBarHeight)
     }
 
     private var dockPadding: CGFloat { isDockStyle ? 8 : 0 }
     private var dockSpacing: CGFloat { isDockStyle ? max(6, iconSize * 0.22) : 0 }
-    private var magnification: CGFloat { isDockStyle ? CGFloat(appState.settings.edgeBarMagnification) : 1 }
 
     private var stripThickness: CGFloat {
         if isDockStyle { return iconSize + dockPadding * 2 }
@@ -108,43 +105,25 @@ struct TuckBarView: View {
         }
     }
 
-    /// Plate stays a rounded material capsule; icons live in a magnifying layout
-    /// so they spread apart like the Dock instead of stacking.
     private var dockBar: some View {
-        let overflow = iconSize * max(0, magnification - 1)
-        let hoveredIndex = items.firstIndex { $0.windowID == hoveredWindowID }
         let plateFill = menuBarColorScheme == .dark
-            ? Color.black.opacity(0.78)
+            ? Color.black.opacity(0.82)
             : Color.white.opacity(0.94)
-        return ZStack(alignment: location == .right ? .trailing : .leading) {
+        return VStack(spacing: dockSpacing) {
+            ForEach(items, id: \.windowID) { item in
+                dockCell(item, index: 0)
+            }
+        }
+        .padding(dockPadding)
+        .background {
             Capsule(style: .continuous)
                 .fill(plateFill)
-                .overlay {
-                    Capsule(style: .continuous)
-                        .fill(.ultraThinMaterial)
-                }
-                .overlay {
-                    Capsule(style: .continuous)
-                        .strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.28 : 0.10), lineWidth: 0.5)
-                }
-                .shadow(color: .black.opacity(menuBarColorScheme == .dark ? 0.55 : 0.20), radius: 16, y: 0)
-                .frame(width: iconSize + dockPadding * 2)
-
-            MagnifyingDockLayout(
-                iconSize: iconSize,
-                spacing: dockSpacing,
-                magnification: magnification,
-                hoveredIndex: hoveredIndex,
-                growSign: location == .right ? -1 : 1
-            ) {
-                ForEach(Array(items.enumerated()), id: \.element.windowID) { index, item in
-                    dockCell(item, index: index)
-                }
-            }
-            .padding(.vertical, dockPadding)
         }
-        .padding(location == .right ? .leading : .trailing, overflow)
-        .animation(.spring(duration: 0.22, bounce: 0.08), value: hoveredWindowID)
+        .overlay {
+            Capsule(style: .continuous)
+                .strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.22 : 0.10), lineWidth: 0.5)
+        }
+        .clipShape(Capsule(style: .continuous))
     }
 
     @ViewBuilder
@@ -247,12 +226,8 @@ struct TuckBarView: View {
     }
 
     private func dockCell(_ item: MenuBarItem, index: Int) -> some View {
-        let hovered = items.firstIndex { $0.windowID == hoveredWindowID }
-        let distance: CGFloat = hovered == nil ? 99 : CGFloat(abs(hovered! - index))
-        let scale = TuckBarGeometry.dockScale(distance: distance, maxScale: magnification)
-        let size = iconSize * scale
-        return DockItemIconView(item: item, size: size)
-            .frame(width: size, height: size)
+        return DockItemIconView(item: item, size: iconSize)
+            .frame(width: iconSize, height: iconSize)
             .overlay {
                 TuckBarItemClickView(item: item, action: { button in
                     if appState.settings.tuckBarAlwaysVisible {
@@ -266,10 +241,6 @@ struct TuckBarView: View {
                     }
                 })
             }
-            .onHover { inside in
-                hoveredWindowID = inside ? item.windowID : nil
-            }
-            .zIndex(scale > 1.01 ? 1 : 0)
     }
 }
 

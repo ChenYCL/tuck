@@ -76,17 +76,16 @@ struct TuckBarView: View {
                 itemStack
                     .background(Color.clear)
                     .frame(width: isVertical ? stripThickness : nil, height: isVertical ? nil : stripThickness)
-                    .padding(.horizontal, isVertical ? 0 : (showsItems ? 8 : 6))
+                    .padding(.horizontal, isVertical ? 0 : (showsItems ? 14 : 8))
                     .padding(.vertical, isVertical ? 8 : 0)
-                    .background { barShape.fill(barFill) }
-                    .overlay {
-                        barStroke.stroke(
-                            Color.primary.opacity(menuBarColorScheme == .dark ? 0.16 : 0.10),
-                            lineWidth: 0.5
-                        )
+                    .background {
+                        Capsule(style: .continuous).fill(barFill)
                     }
-                    .clipShape(barShape)
-                    .shadow(color: .black.opacity(isAttached ? 0.08 : 0.18), radius: isAttached ? 3 : 8, y: isAttached ? 1 : 3)
+                    .overlay {
+                        Capsule(style: .continuous)
+                            .strokeBorder(Color.primary.opacity(menuBarColorScheme == .dark ? 0.16 : 0.10), lineWidth: 0.5)
+                    }
+                    .shadow(color: .black.opacity(0.16), radius: 8, y: 2)
             }
         }
         .environment(\.colorScheme, menuBarColorScheme)
@@ -139,11 +138,8 @@ struct TuckBarView: View {
                 itemBody
             }
         } else if location == .below {
-            // Handle sits under the clock; items grow left so the left edge is a
-            // square shelf, not a chevron inside a round cap.
             HStack(spacing: 0) {
                 itemBody
-                settingsButton
             }
         } else {
             HStack(spacing: 0) {
@@ -170,6 +166,12 @@ struct TuckBarView: View {
             .scrollIndicators(.hidden)
             .defaultScrollAnchor(.center)
             .frame(maxHeight: max(screen.frame.height - screen.menuBarHeight - 48, 40))
+        } else if location == .below {
+            HStack(spacing: 0) {
+                ForEach(items, id: \.windowID) { item in
+                    dockItem(item)
+                }
+            }
         } else {
             ScrollView(.horizontal) {
                 HStack(spacing: 0) {

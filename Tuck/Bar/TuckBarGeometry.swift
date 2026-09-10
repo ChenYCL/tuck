@@ -17,7 +17,7 @@ enum TuckBarGeometry {
     /// left/right use a Dock-style inset instead.
     static func menuBarGap(for location: TuckBarLocation) -> CGFloat {
         switch location {
-        case .below: 0
+        case .below: 4
         case .left, .right: 0
         case .dynamic, .mousePointer, .tuckIcon: 4
         }
@@ -101,7 +101,7 @@ enum TuckBarGeometry {
 
         switch location {
         case .below:
-            return CGPoint(x: clampedX(screen.frame.maxX - barSize.width), y: yBelowMenuBar)
+            return CGPoint(x: clampedX(screen.frame.midX - barSize.width / 2), y: yBelowMenuBar)
         case .left:
             return CGPoint(
                 x: screen.frame.minX + edgeInset,

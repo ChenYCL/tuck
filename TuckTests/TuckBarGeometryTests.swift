@@ -10,7 +10,7 @@ struct TuckBarGeometryTests {
     private let horizontalBar = CGSize(width: 200, height: 34)
     private let verticalBar = CGSize(width: 40, height: 300)
 
-    @Test func belowAlignsToTrailingEdgeUnderMenuBar() {
+    @Test func belowCentersUnderMenuBarWithoutClippingToTheTrailingEdge() {
         let origin = TuckBarGeometry.origin(
             location: .below,
             barSize: horizontalBar,
@@ -19,8 +19,8 @@ struct TuckBarGeometryTests {
             tuckIconMidX: 700,
             isMouseInEmptySpace: false
         )
-        #expect(origin.x == 1240)
-        #expect(origin.y == 842)
+        #expect(origin.x == 620)
+        #expect(origin.y == 838)
     }
 
     @Test func leftDockIsCenteredAndInset() {
@@ -80,7 +80,7 @@ struct TuckBarGeometryTests {
             menuBarHeight: 30
         )
         let screen = FloatingHandleGeometry.screenContaining(
-            CGPoint(x: 100, y: 1000),
+            CGPoint(x: 100, y: 1080),
             screens: [bottom, top]
         )
         #expect(screen?.frame.minY == 1100)
@@ -122,7 +122,7 @@ struct TuckBarGeometryTests {
     }
 
     @Test func attachedEdgesMatchPlacement() {
-        #expect(TuckBarLocation.below.attachedEdge == .top)
+        #expect(TuckBarLocation.below.attachedEdge == .none)
         #expect(TuckBarLocation.left.attachedEdge == .none)
         #expect(TuckBarLocation.right.attachedEdge == .none)
         #expect(TuckBarLocation.mousePointer.attachedEdge == .none)
@@ -136,7 +136,7 @@ struct TuckBarGeometryTests {
     }
 
     @Test func attachedBarsSitFlushAndPointerBarsLeaveAGap() {
-        #expect(TuckBarGeometry.menuBarGap(for: .below) == 0)
+        #expect(TuckBarGeometry.menuBarGap(for: .below) == 4)
         #expect(TuckBarGeometry.edgeInset(for: .left, configured: 12) == 12)
         #expect(TuckBarGeometry.edgeInset(for: .below, configured: 12) == 0)
         #expect(TuckBarGeometry.menuBarGap(for: .left) == 0)

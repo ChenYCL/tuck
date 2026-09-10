@@ -158,7 +158,7 @@ struct AttachedTabStroke: Shape {
 extension TuckBarLocation {
     var attachedEdge: AttachedTabShape.AttachedEdge {
         switch self {
-        case .below: .top
+        case .below: .none
         case .left, .right: .none
         case .dynamic, .mousePointer, .tuckIcon: .none
         }

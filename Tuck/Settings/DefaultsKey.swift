@@ -6,6 +6,7 @@ enum DefaultsKey: String {
     case customIconIsTemplate = "CustomIconIsTemplate"
     case useTuckBar = "UseTuckBar"
     case tuckBarLocation = "TuckBarLocation"
+    case tuckBarAlwaysVisible = "TuckBarAlwaysVisible"
     case showOnClick = "ShowOnClick"
     case showOnHover = "ShowOnHover"
     case showOnScroll = "ShowOnScroll"

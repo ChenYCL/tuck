@@ -56,7 +56,15 @@ final class MenuBarSection {
         appState.menuBarManager.section(named: name)
     }
 
+    private var isTuckBarPinned: Bool {
+        appState.settings.useTuckBar && appState.settings.tuckBarAlwaysVisible
+    }
+
     func show() {
+        if isTuckBarPinned {
+            Task { await appState.tuckBar.showPinnedIfNeeded() }
+            return
+        }
         guard isHidden, controlItem.isAddedToMenuBar else { return }
         if appState.settings.useTuckBar {
             guard let screen = screenForTuckBar else { return }
@@ -88,6 +96,10 @@ final class MenuBarSection {
     }
 
     func hide() {
+        if isTuckBarPinned {
+            stopRehideTimer()
+            return
+        }
         guard !isHidden else { return }
         appState.tuckBar.close()
         if appState.settings.useTuckBar {

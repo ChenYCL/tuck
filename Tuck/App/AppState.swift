@@ -63,6 +63,9 @@ final class AppState {
         itemStore.setup()
         imageCache.setup()
         updates.setup()
+        if settings.useTuckBar && settings.tuckBarAlwaysVisible {
+            Task { await tuckBar.showPinnedIfNeeded() }
+        }
     }
 
     // MARK: - Windows

@@ -55,11 +55,19 @@ struct GeneralPane: View {
 
             Section("Tuck Bar") {
                 Toggle("Use Tuck Bar", isOn: $settings.useTuckBar)
-                Text("Show hidden menu bar items in a separate bar below the menu bar")
+                Text("Show hidden menu bar items in a separate bar. Choose below, left, or right when the menu bar is too full.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 if settings.useTuckBar {
+                    Toggle("Always show Tuck Bar", isOn: $settings.tuckBarAlwaysVisible)
+                    Text("Keep the extra bar on screen so hidden items stay reachable when the menu bar is full.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                     Picker("Location", selection: $settings.tuckBarLocation) {
+                        Text("Below menu bar").tag(TuckBarLocation.below)
+                        Text("Left edge").tag(TuckBarLocation.left)
+                        Text("Right edge").tag(TuckBarLocation.right)
+                        Divider()
                         Text("Dynamic").tag(TuckBarLocation.dynamic)
                         Text("Mouse pointer").tag(TuckBarLocation.mousePointer)
                         Text("Tuck icon").tag(TuckBarLocation.tuckIcon)

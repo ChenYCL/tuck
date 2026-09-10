@@ -12,18 +12,25 @@ struct TuckBarView: View {
         appState.itemStore.cache.managedItems(for: section)
     }
 
-    private var contentHeight: CGFloat {
+    private var isVertical: Bool {
+        appState.settings.tuckBarLocation.isVertical
+    }
+
+    private var stripThickness: CGFloat {
         let height = appState.imageCache.menuBarHeight ?? screen.menuBarHeight
         return screen.hasNotch ? height - 10 : height
     }
 
     var body: some View {
         content
-            .frame(height: contentHeight)
-            .padding(.horizontal, 7)
+            .frame(width: isVertical ? stripThickness : nil, height: isVertical ? nil : stripThickness)
+            .padding(isVertical ? EdgeInsets(top: 7, leading: 0, bottom: 7, trailing: 0) : EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7))
             .glassEffect(.regular, in: .capsule)
             .padding(5)
-            .frame(maxWidth: screen.frame.width)
+            .frame(
+                maxWidth: isVertical ? nil : screen.frame.width,
+                maxHeight: isVertical ? max(screen.frame.height - screen.menuBarHeight - 8, 40) : nil
+            )
     }
 
     @ViewBuilder
@@ -31,9 +38,44 @@ struct TuckBarView: View {
         if appState.menuBarManager.isMenuBarHiddenBySystemUserDefaults {
             Text("The Tuck Bar cannot be used with an automatically hidden menu bar")
                 .padding(.horizontal, 10)
-        } else if items.isEmpty {
-            Text("No menu bar items in the \(section.displayName) section")
+        } else {
+            itemStack
+        }
+    }
+
+    @ViewBuilder
+    private var itemStack: some View {
+        let spacing: CGFloat = 0
+        if isVertical {
+            VStack(spacing: spacing) {
+                settingsButton
+                itemBody
+            }
+        } else {
+            HStack(spacing: spacing) {
+                settingsButton
+                itemBody
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var itemBody: some View {
+        if items.isEmpty {
+            Text(appState.settings.tuckBarAlwaysVisible
+                 ? "Drag items into Hidden in Settings → Layout"
+                 : "No menu bar items in the \(section.displayName) section")
                 .padding(.horizontal, 10)
+        } else if isVertical {
+            ScrollView(.vertical) {
+                VStack(spacing: 0) {
+                    ForEach(items, id: \.windowID) { item in
+                        TuckBarItemView(item: item, panel: panel)
+                    }
+                }
+            }
+            .defaultScrollAnchor(.top)
+            .frame(maxHeight: max(screen.frame.height - screen.menuBarHeight - 40, 40))
         } else {
             ScrollView(.horizontal) {
                 HStack(spacing: 0) {
@@ -43,7 +85,29 @@ struct TuckBarView: View {
                 }
             }
             .defaultScrollAnchor(.trailing)
+            .frame(maxWidth: max(screen.frame.width - 40, 40))
         }
+    }
+
+    private var settingsButton: some View {
+        Button {
+            appState.openSettingsWindow(pane: .general)
+        } label: {
+            Group {
+                if let image = appState.settings.tuckIcon.image(state: .hideItems, isTemplate: appState.settings.customIconIsTemplate) {
+                    Image(nsImage: image)
+                } else {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 12, weight: .medium))
+                }
+            }
+            .frame(width: 22, height: 22)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(String(localized: "Settings"))
+        .accessibilityLabel(String(localized: "Settings"))
+        .padding(isVertical ? EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0) : EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
     }
 }
 
@@ -80,7 +144,9 @@ private struct TuckBarItemView: View {
     }
 
     private func performAction(_ button: CGMouseButton) {
-        panel.close()
+        if !appState.settings.tuckBarAlwaysVisible {
+            panel.close()
+        }
         Task {
             try? await Task.sleep(for: .milliseconds(25))
             appState.itemMover.tempShowItem(item, clickWhenFinished: true, mouseButton: button)

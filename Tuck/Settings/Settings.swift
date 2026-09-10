@@ -11,6 +11,7 @@ final class Settings {
     var customIconIsTemplate: Bool { didSet { defaults.set(customIconIsTemplate, for: .customIconIsTemplate) } }
     var useTuckBar: Bool { didSet { defaults.set(useTuckBar, for: .useTuckBar) } }
     var tuckBarLocation: TuckBarLocation { didSet { defaults.set(tuckBarLocation, for: .tuckBarLocation) } }
+    var tuckBarAlwaysVisible: Bool { didSet { defaults.set(tuckBarAlwaysVisible, for: .tuckBarAlwaysVisible) } }
     var showOnClick: Bool { didSet { defaults.set(showOnClick, for: .showOnClick) } }
     var showOnHover: Bool { didSet { defaults.set(showOnHover, for: .showOnHover) } }
     var showOnScroll: Bool { didSet { defaults.set(showOnScroll, for: .showOnScroll) } }
@@ -34,8 +35,9 @@ final class Settings {
         showTuckIcon = defaults.bool(for: .showTuckIcon, default: true)
         tuckIcon = defaults.decoded(for: .tuckIcon, default: .dot)
         customIconIsTemplate = defaults.bool(for: .customIconIsTemplate, default: false)
-        useTuckBar = defaults.bool(for: .useTuckBar, default: false)
-        tuckBarLocation = defaults.rawValue(for: .tuckBarLocation, default: .dynamic)
+        useTuckBar = defaults.bool(for: .useTuckBar, default: true)
+        tuckBarLocation = defaults.rawValue(for: .tuckBarLocation, default: .below)
+        tuckBarAlwaysVisible = defaults.bool(for: .tuckBarAlwaysVisible, default: true)
         showOnClick = defaults.bool(for: .showOnClick, default: true)
         showOnHover = defaults.bool(for: .showOnHover, default: false)
         showOnScroll = defaults.bool(for: .showOnScroll, default: true)

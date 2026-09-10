@@ -153,6 +153,16 @@
         }
       }
     },
+    "Always show Tuck Bar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "始终显示 Tuck Bar"
+          }
+        }
+      }
+    },
     "Apply" : {
       "localizations" : {
         "zh-Hans" : {
@@ -259,6 +269,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "边框颜色"
+          }
+        }
+      }
+    },
+    "Below menu bar" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "菜单栏下方"
           }
         }
       }
@@ -389,6 +409,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "圆点"
+          }
+        }
+      }
+    },
+    "Drag items into Hidden in Settings → Layout" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在设置 → 布局 里把图标拖进隐藏区"
           }
         }
       }
@@ -714,12 +744,32 @@
         }
       }
     },
+    "Keep the extra bar on screen so hidden items stay reachable when the menu bar is full." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "菜单栏挤满时，把额外条栏留在屏幕上，隐藏项仍然点得到。"
+          }
+        }
+      }
+    },
     "Launch at login" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "登录时启动"
+          }
+        }
+      }
+    },
+    "Left edge" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕左侧"
           }
         }
       }
@@ -1026,6 +1076,16 @@
         }
       }
     },
+    "Right edge" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "屏幕右侧"
+          }
+        }
+      }
+    },
     "Reset" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1163,6 +1223,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在菜单栏下方的单独条栏中显示隐藏的菜单栏项目"
+          }
+        }
+      }
+    },
+    "Show hidden menu bar items in a separate bar. Choose below, left, or right when the menu bar is too full." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在单独条栏中显示隐藏的菜单栏项目。菜单栏太满时，可选下方、左侧或右侧。"
           }
         }
       }

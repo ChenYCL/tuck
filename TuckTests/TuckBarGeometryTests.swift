@@ -72,6 +72,12 @@ struct TuckBarGeometryTests {
         #expect(normalized.y == 1)
     }
 
+    @Test func dockMapsSystemExtrasToSymbols() {
+        #expect(DockItemIcon.symbolName(title: "com.apple.menuextra.wifi", displayName: "Wi-Fi", namespace: "com.apple.controlcenter") == "wifi")
+        #expect(DockItemIcon.symbolName(title: "com.apple.menuextra.battery", displayName: "Battery", namespace: nil) == "battery.100percent")
+        #expect(DockItemIcon.symbolName(title: "NowPlaying", displayName: "Now Playing", namespace: nil) == "play.circle.fill")
+    }
+
     @Test func attachedEdgesMatchPlacement() {
         #expect(TuckBarLocation.below.attachedEdge == .top)
         #expect(TuckBarLocation.left.attachedEdge == .none)

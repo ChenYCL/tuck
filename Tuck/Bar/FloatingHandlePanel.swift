@@ -60,6 +60,7 @@ final class FloatingHandlePanel: NSPanel {
         hosting.wantsLayer = true
         hosting.layer?.backgroundColor = .clear
         hosting.layer?.isOpaque = false
+        hosting.layer?.contentsScale = NSScreen.main?.backingScaleFactor ?? 2
         contentView = hosting
         setContentSize(NSSize(width: size, height: size))
         applyStoredFrame()

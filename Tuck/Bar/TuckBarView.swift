@@ -87,7 +87,6 @@ struct TuckBarView: View {
                 )
             }
             .clipShape(barShape)
-            .compositingGroup()
             .environment(\.colorScheme, menuBarColorScheme)
             .shadow(
                 color: .black.opacity(isDockStyle ? 0.28 : (isAttached ? 0.08 : 0.18)),
@@ -178,7 +177,12 @@ struct TuckBarView: View {
             }
         } label: {
             Group {
-                if !showsItems {
+                if isDockStyle {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: iconSize * 0.5, weight: .medium))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.secondary)
+                } else if !showsItems {
                     Image(systemName: "chevron.compact.down")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.secondary)
@@ -190,7 +194,7 @@ struct TuckBarView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(width: 18, height: 18)
+            .frame(width: isDockStyle ? iconSize : 18, height: isDockStyle ? iconSize : 18)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -203,8 +207,27 @@ struct TuckBarView: View {
         let hovering = hoveredWindowID == item.windowID
         let scale = hovering ? magnification : 1
         let pop: CGFloat = hovering ? (iconSize * (magnification - 1) * 0.35) : 0
-        return TuckBarItemView(item: item, panel: panel, preferredSize: isDockStyle ? iconSize : nil, prefersAppIcon: isDockStyle)
-            .frame(width: isDockStyle ? iconSize : nil, height: isDockStyle ? iconSize : nil)
+        return Group {
+            if isDockStyle {
+                DockItemIconView(item: item, size: iconSize)
+                    .overlay {
+                        TuckBarItemClickView(item: item, action: { button in
+                            if appState.settings.tuckBarAlwaysVisible {
+                                panel.collapseToHandle()
+                            } else {
+                                panel.close()
+                            }
+                            Task {
+                                try? await Task.sleep(for: .milliseconds(25))
+                                appState.itemMover.tempShowItem(item, clickWhenFinished: true, mouseButton: button)
+                            }
+                        })
+                    }
+            } else {
+                TuckBarItemView(item: item, panel: panel, preferredSize: nil, prefersAppIcon: false)
+            }
+        }
+        .frame(width: isDockStyle ? iconSize : nil, height: isDockStyle ? iconSize : nil)
             .scaleEffect(scale)
             .offset(x: location == .right ? -pop : (location == .left ? pop : 0))
             .animation(.spring(duration: 0.22, bounce: 0.18), value: hovering)

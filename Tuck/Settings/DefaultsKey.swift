@@ -12,6 +12,7 @@ enum DefaultsKey: String {
     case floatingHandleIcon = "FloatingHandleIcon"
     case floatingHandleX = "FloatingHandleX"
     case floatingHandleY = "FloatingHandleY"
+    case floatingHandleDisplayID = "FloatingHandleDisplayID"
     case edgeBarIconSize = "EdgeBarIconSize"
     case edgeBarEdgeInset = "EdgeBarEdgeInset"
     case edgeBarMagnification = "EdgeBarMagnification"

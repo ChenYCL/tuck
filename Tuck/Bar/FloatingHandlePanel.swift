@@ -30,6 +30,30 @@ final class FloatingHandlePanel: NSPanel {
         configureObservers()
     }
 
+    /// AppKit otherwise pins the window to the screen it started on.
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
+        let specs = NSScreen.screens.map {
+            FloatingHandleGeometry.ScreenSpec(frame: $0.frame, menuBarHeight: $0.menuBarHeight)
+        }
+        let probe = CGPoint(x: frameRect.midX, y: frameRect.midY)
+        guard let spec = FloatingHandleGeometry.screenContaining(probe, screens: specs) else {
+            return frameRect
+        }
+        let bounds = FloatingHandleGeometry.movableBounds(
+            size: frameRect.size.width,
+            screen: spec.frame,
+            menuBarHeight: spec.menuBarHeight
+        )
+        var origin = frameRect.origin
+        if bounds.width > 0 {
+            origin.x = origin.x.clamped(to: bounds.minX...bounds.maxX)
+        }
+        if bounds.height > 0 {
+            origin.y = origin.y.clamped(to: bounds.minY...bounds.maxY)
+        }
+        return NSRect(origin: origin, size: frameRect.size)
+    }
+
     private func configureObservers() {
         observers.append(Observe.track { [weak self] in
             guard let self else { return }
@@ -92,7 +116,7 @@ final class FloatingHandlePanel: NSPanel {
     }
 
     func applyStoredFrame() {
-        guard let screen = NSScreen.screenWithActiveMenuBar ?? NSScreen.screens.first ?? NSScreen.main else { return }
+        guard let screen = screenForStoredHandle() else { return }
         let size = CGFloat(appState.settings.floatingHandleSize)
         setContentSize(NSSize(width: size, height: size))
         applyCircleClip(size: size)
@@ -103,27 +127,27 @@ final class FloatingHandlePanel: NSPanel {
             menuBarHeight: screen.menuBarHeight
         )
         setFrameOrigin(origin)
+        contentView?.layer?.contentsScale = screen.backingScaleFactor
     }
 
     func moveToCursor() {
-        guard let screen = screen ?? NSScreen.main else { return }
-        let size = frame.size
-        var origin = CGPoint(
-            x: NSEvent.mouseLocation.x - size.width / 2,
-            y: NSEvent.mouseLocation.y - size.height / 2
+        let size = frame.size.width
+        let specs = NSScreen.screens.map {
+            FloatingHandleGeometry.ScreenSpec(frame: $0.frame, menuBarHeight: $0.menuBarHeight)
+        }
+        let origin = FloatingHandleGeometry.clampedOrigin(
+            cursor: NSEvent.mouseLocation,
+            size: size,
+            screens: specs
         )
-        let bounds = FloatingHandleGeometry.movableBounds(
-            size: size.width,
-            screen: screen.frame,
-            menuBarHeight: screen.menuBarHeight
-        )
-        origin.x = origin.x.clamped(to: bounds.minX...bounds.maxX)
-        origin.y = origin.y.clamped(to: bounds.minY...bounds.maxY)
         setFrameOrigin(origin)
+        if let screen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) }) {
+            contentView?.layer?.contentsScale = screen.backingScaleFactor
+        }
     }
 
     func persistPosition() {
-        guard let screen = screen ?? NSScreen.main else { return }
+        guard let screen = screenContaining(frame.center) else { return }
         let normalized = FloatingHandleGeometry.normalized(
             origin: frame.origin,
             size: frame.width,
@@ -132,6 +156,31 @@ final class FloatingHandlePanel: NSPanel {
         )
         appState.settings.floatingHandleX = normalized.x
         appState.settings.floatingHandleY = normalized.y
+        appState.settings.floatingHandleDisplayID = Int(screen.displayID)
+    }
+
+    private func screenForStoredHandle() -> NSScreen? {
+        let id = CGDirectDisplayID(appState.settings.floatingHandleDisplayID)
+        if id != 0, let match = NSScreen.screens.first(where: { $0.displayID == id }) {
+            return match
+        }
+        return screenContaining(NSEvent.mouseLocation)
+            ?? NSScreen.screenWithMouse
+            ?? NSScreen.screens.first
+            ?? NSScreen.main
+    }
+
+    private func screenContaining(_ point: CGPoint) -> NSScreen? {
+        if let hit = NSScreen.screens.first(where: { $0.frame.contains(point) }) {
+            return hit
+        }
+        return NSScreen.screens.min {
+            let a = $0.frame
+            let b = $1.frame
+            let da = hypot(point.x.clamped(to: a.minX...a.maxX) - point.x, point.y.clamped(to: a.minY...a.maxY) - point.y)
+            let db = hypot(point.x.clamped(to: b.minX...b.maxX) - point.x, point.y.clamped(to: b.minY...b.maxY) - point.y)
+            return da < db
+        }
     }
 
     func handleClick() {

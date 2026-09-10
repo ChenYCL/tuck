@@ -17,6 +17,7 @@ final class Settings {
     var floatingHandleIcon: FloatingHandleIcon { didSet { defaults.set(floatingHandleIcon, for: .floatingHandleIcon) } }
     var floatingHandleX: Double { didSet { defaults.set(floatingHandleX, for: .floatingHandleX) } }
     var floatingHandleY: Double { didSet { defaults.set(floatingHandleY, for: .floatingHandleY) } }
+    var floatingHandleDisplayID: Int { didSet { defaults.set(floatingHandleDisplayID, for: .floatingHandleDisplayID) } }
     var edgeBarIconSize: Double { didSet { defaults.set(edgeBarIconSize, for: .edgeBarIconSize) } }
     var edgeBarEdgeInset: Double { didSet { defaults.set(edgeBarEdgeInset, for: .edgeBarEdgeInset) } }
     var edgeBarMagnification: Double { didSet { defaults.set(edgeBarMagnification, for: .edgeBarMagnification) } }
@@ -51,6 +52,7 @@ final class Settings {
         floatingHandleIcon = defaults.rawValue(for: .floatingHandleIcon, default: .chevron)
         floatingHandleX = defaults.double(for: .floatingHandleX, default: 1)
         floatingHandleY = defaults.double(for: .floatingHandleY, default: 0.62)
+        floatingHandleDisplayID = defaults.integer(for: .floatingHandleDisplayID, default: 0)
         edgeBarIconSize = defaults.double(for: .edgeBarIconSize, default: 40)
         edgeBarEdgeInset = defaults.double(for: .edgeBarEdgeInset, default: 12)
         edgeBarMagnification = defaults.double(for: .edgeBarMagnification, default: 1.35)

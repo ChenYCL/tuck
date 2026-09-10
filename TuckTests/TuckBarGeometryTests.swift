@@ -51,6 +51,41 @@ struct TuckBarGeometryTests {
         #expect(origin.y == 288)
     }
 
+    @Test func floatingHandleFollowsCursorOntoAnotherScreen() {
+        let laptop = FloatingHandleGeometry.ScreenSpec(
+            frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+            menuBarHeight: 24
+        )
+        let external = FloatingHandleGeometry.ScreenSpec(
+            frame: CGRect(x: -1920, y: 0, width: 1920, height: 1080),
+            menuBarHeight: 30
+        )
+        let origin = FloatingHandleGeometry.clampedOrigin(
+            cursor: CGPoint(x: -200, y: 500),
+            size: 48,
+            screens: [laptop, external]
+        )
+        #expect(origin.x < 0)
+        #expect(origin.x >= -1920 + 12)
+        #expect(origin.x <= -1920 + 1920 - 48 - 12)
+    }
+
+    @Test func floatingHandleUsesNearestScreenWhenCursorIsInAGap() {
+        let bottom = FloatingHandleGeometry.ScreenSpec(
+            frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+            menuBarHeight: 24
+        )
+        let top = FloatingHandleGeometry.ScreenSpec(
+            frame: CGRect(x: 0, y: 1100, width: 1920, height: 1080),
+            menuBarHeight: 30
+        )
+        let screen = FloatingHandleGeometry.screenContaining(
+            CGPoint(x: 100, y: 1000),
+            screens: [bottom, top]
+        )
+        #expect(screen?.frame.minY == 1100)
+    }
+
     @Test func floatingHandleStaysOnScreenAndBelowMenuBar() {
         let screen = CGRect(x: 0, y: 0, width: 1440, height: 900)
         let origin = FloatingHandleGeometry.origin(

@@ -98,6 +98,9 @@ final class TuckBarPanel: NSPanel {
             _ = appState.settings.edgeBarIconSize
             _ = appState.settings.edgeBarEdgeInset
             _ = appState.settings.edgeBarMagnification
+            _ = appState.settings.overflowBarOpacity
+            _ = appState.settings.overflowBarCustomTint
+            _ = appState.settings.overflowBarTint
             Task { @MainActor [weak self] in
                 guard let self else { return }
                 if useBar && alwaysVisible {

@@ -599,7 +599,14 @@ final class ItemMover {
     }
 
     private func temporarilyShow(item: MenuBarItem, click: Bool, mouseButton: CGMouseButton) async {
-        if let latest = MenuBarItem(windowID: item.windowID), latest.isOnScreen {
+        if
+            let latest = MenuBarItem(windowID: item.windowID),
+            ItemClickPolicy.shouldClickInPlace(
+                isOnScreen: latest.isOnScreen,
+                section: appState.itemStore.cache.section(for: item) ?? appState.itemStore.cache.section(for: latest),
+                useTuckBar: appState.settings.useTuckBar
+            )
+        {
             if click {
                 do {
                     try await self.click(item: latest, with: mouseButton)
@@ -667,7 +674,8 @@ final class ItemMover {
         await eventSleep(for: .milliseconds(100))
         let idsBeforeClick = Set(Bridging.windowList(option: .onScreen))
         do {
-            try await self.click(item: item, with: mouseButton)
+            let clickable = MenuBarItem(windowID: item.windowID) ?? item
+            try await self.click(item: clickable, with: mouseButton)
         } catch {
             Logger.itemMover.error("Error clicking item: \(error)")
             return

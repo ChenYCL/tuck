@@ -100,6 +100,18 @@ struct GeneralPane: View {
                             }
                         }
                     }
+                    LabeledContent("Bar opacity") {
+                        HStack {
+                            Slider(value: $settings.overflowBarOpacity, in: 0.4...1, step: 0.02)
+                            Text("\(Int(settings.overflowBarOpacity * 100))%")
+                                .monospacedDigit()
+                                .frame(width: 40, alignment: .trailing)
+                        }
+                    }
+                    Toggle("Custom bar color", isOn: $settings.overflowBarCustomTint)
+                    if settings.overflowBarCustomTint {
+                        ColorRow("Bar color", color: $settings.overflowBarTint, supportsOpacity: false)
+                    }
                     Picker("Bar location when shown", selection: $settings.tuckBarLocation) {
                         Text("Below menu bar").tag(TuckBarLocation.below)
                         Text("Left edge").tag(TuckBarLocation.left)

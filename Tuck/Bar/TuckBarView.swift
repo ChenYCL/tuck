@@ -41,9 +41,13 @@ struct TuckBarView: View {
     }
 
     private var barFill: Color {
-        menuBarColorScheme == .dark
-            ? Color.black.opacity(0.88)
-            : Color.white.opacity(0.94)
+        let opacity = appState.settings.overflowBarOpacity
+        if appState.settings.overflowBarCustomTint {
+            return Color(nsColor: appState.settings.overflowBarTint.nsColor).opacity(opacity)
+        }
+        return menuBarColorScheme == .dark
+            ? Color.black.opacity(opacity)
+            : Color.white.opacity(opacity)
     }
 
     /// Dock uses a continuous rounded rect; the below shelf only rounds the bottom.
@@ -105,9 +109,7 @@ struct TuckBarView: View {
     }
 
     private var dockBar: some View {
-        let plateFill = menuBarColorScheme == .dark
-            ? Color.black.opacity(0.82)
-            : Color.white.opacity(0.94)
+        let plateFill = barFill
         return VStack(spacing: dockSpacing) {
             ForEach(items, id: \.windowID) { item in
                 dockCell(item, index: 0)
@@ -330,6 +332,7 @@ private final class ClickCaptureView: NSView {
         self.item = item
         self.action = action
         super.init(frame: .zero)
+        autoresizingMask = [.width, .height]
     }
 
     @available(*, unavailable)

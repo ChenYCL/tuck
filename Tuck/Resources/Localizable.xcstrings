@@ -253,6 +253,26 @@
         }
       }
     },
+    "Bar color" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条栏颜色"
+          }
+        }
+      }
+    },
+    "Bar opacity" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "条栏不透明度"
+          }
+        }
+      }
+    },
     "Border" : {
       "localizations" : {
         "zh-Hans" : {
@@ -379,6 +399,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "无法为“%@”创建事件"
+          }
+        }
+      }
+    },
+    "Custom bar color" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义条栏颜色"
           }
         }
       }

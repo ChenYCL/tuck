@@ -115,6 +115,14 @@ struct TuckBarGeometryTests {
         #expect(neighbor < 1.6)
     }
 
+    @Test func hiddenTuckBarItemsAreNotClickedInPlace() {
+        #expect(ItemClickPolicy.shouldClickInPlace(isOnScreen: true, section: .hidden, useTuckBar: true) == false)
+        #expect(ItemClickPolicy.shouldClickInPlace(isOnScreen: true, section: .alwaysHidden, useTuckBar: true) == false)
+        #expect(ItemClickPolicy.shouldClickInPlace(isOnScreen: true, section: .visible, useTuckBar: true) == true)
+        #expect(ItemClickPolicy.shouldClickInPlace(isOnScreen: true, section: .hidden, useTuckBar: false) == true)
+        #expect(ItemClickPolicy.shouldClickInPlace(isOnScreen: false, section: .visible, useTuckBar: true) == false)
+    }
+
     @Test func dockMapsSystemExtrasToSymbols() {
         #expect(DockItemIcon.symbolName(title: "com.apple.menuextra.wifi", displayName: "Wi-Fi", namespace: "com.apple.controlcenter") == "wifi")
         #expect(DockItemIcon.symbolName(title: "com.apple.menuextra.battery", displayName: "Battery", namespace: nil) == "battery.100percent")

@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 
@@ -21,6 +22,11 @@ final class Settings {
     var edgeBarIconSize: Double { didSet { defaults.set(edgeBarIconSize, for: .edgeBarIconSize) } }
     var edgeBarEdgeInset: Double { didSet { defaults.set(edgeBarEdgeInset, for: .edgeBarEdgeInset) } }
     var edgeBarMagnification: Double { didSet { defaults.set(edgeBarMagnification, for: .edgeBarMagnification) } }
+    var overflowBarOpacity: Double { didSet { defaults.set(overflowBarOpacity, for: .overflowBarOpacity) } }
+    var overflowBarCustomTint: Bool { didSet { defaults.set(overflowBarCustomTint, for: .overflowBarCustomTint) } }
+    var overflowBarTint: CodableColor {
+        didSet { defaults.setEncoded(overflowBarTint, for: .overflowBarTint) }
+    }
     var showOnClick: Bool { didSet { defaults.set(showOnClick, for: .showOnClick) } }
     var showOnHover: Bool { didSet { defaults.set(showOnHover, for: .showOnHover) } }
     var showOnScroll: Bool { didSet { defaults.set(showOnScroll, for: .showOnScroll) } }
@@ -56,6 +62,9 @@ final class Settings {
         edgeBarIconSize = defaults.double(for: .edgeBarIconSize, default: 40)
         edgeBarEdgeInset = defaults.double(for: .edgeBarEdgeInset, default: 12)
         edgeBarMagnification = defaults.double(for: .edgeBarMagnification, default: 1.35)
+        overflowBarOpacity = defaults.double(for: .overflowBarOpacity, default: 0.94)
+        overflowBarCustomTint = defaults.bool(for: .overflowBarCustomTint, default: false)
+        overflowBarTint = defaults.decoded(for: .overflowBarTint, default: CodableColor(NSColor.white))
         showOnClick = defaults.bool(for: .showOnClick, default: true)
         showOnHover = defaults.bool(for: .showOnHover, default: false)
         showOnScroll = defaults.bool(for: .showOnScroll, default: true)
